@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc version="1.3" reference="Macros.KanbanService" locale="">
+  <web>Macros</web>
+  <name>KanbanService</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <creationDate>1514761200000</creationDate>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <date>1514761200000</date>
+  <contentUpdateDate>1514761200000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <content>{{velocity}}
+#set($groovy = $xwiki.parseGroovyFromPage("Macros.KanbanGroovy"))
+#set($ok = $groovy.setContext($xcontext ,$xwiki))
+#if($groovy=="groovy_missingrights")
+FAILED Missing programming rights on Macros.KanbanGroovy
+#else
+#set($result = $groovy.updateDocument($xwiki.getDocument($request.page), "kanban", $util.parseInt($request.nb), $request.content))
+#if($result &amp;&amp; $result!=0)
+SUCCESS ${result}
+#else
+FAILED ${result}
+#end
+#end
+{{/velocity}}</content>
+</xwikidoc>
