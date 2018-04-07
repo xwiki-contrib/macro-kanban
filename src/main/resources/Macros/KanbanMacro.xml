@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
--->
-
 <xwikidoc version="1.3" reference="Macros.KanbanMacro" locale="">
   <web>Macros</web>
   <name>KanbanMacro</name>
@@ -27,63 +7,51 @@
   <defaultLanguage/>
   <translation>0</translation>
   <creator>xwiki:XWiki.Admin</creator>
-  <creationDate>1517822336000</creationDate>
-  <parent>WebHome</parent>
+  <creationDate>1514761200000</creationDate>
+  <parent>xwiki:Macros.WebHome</parent>
   <author>xwiki:XWiki.Admin</author>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
-  <date>1517863324000</date>
-  <contentUpdateDate>1517862016000</contentUpdateDate>
+  <date>1514761200000</date>
+  <contentUpdateDate>1514761200000</contentUpdateDate>
   <version>1.1</version>
   <title>KanbanMacro</title>
   <comment/>
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
-  <content>Example:
+  <content>The Kanban macro allows to display a Kanban using a modified version of the [[jkanban javascript library&gt;&gt;https://github.com/riktar/jkanban]].
+The macro can take the JSON of the kanban either from the content of the macro or from an URL. There is also the [[AWMKanbanMacro]] allowing to display a kanban board from AppWithinMinutes data.
 
-##{{{{{kanban app="Ideas" category="priority" order="doc.date" columns="status,assignement" /}}}}}##
+##{{{
+{{kanban width="30%" source="" updateService="" addBoardButton="true" addItemButton="true" removeBoardButton="true" removeBoardItem="true"}}
+[
+ {"id":"todo","title":"To Do","color":"red","item":[{"title":"Item 2"},{"title":"Item 1"}]},
+ {"id":"working","title":"Working","color":"blue","item":[{"title":"Hello"},{"title":"Item 4"},{"title":"Item 6"}]},
+ {"id":"done","title":"Done","color":"green","item":[{"title":"Item 5b"},{"title":"Item 5"}]}
+]
+{{/kanban}}
+}}}##
 
-* ##app or className## application or className for which to build the kanban board
-* ##category## field to use to break down the kanban board
-* ##xwql## additional xwql to restrict the query
-* ##order## field by which to order cards
-* ##title## field to display the title
-* ##columns## additional columns to display 
-* ##cssClasses## classes to display the columns. Default is col-xs-12 col-md-4
+Additional parameters:
 
-The Kanban macro allows to drag and drop items from one column to another.
+* ##width## width of each column in the kanban (default 30%)
+* ##source## URL source of the Kanban data in JSON
+* ##updateService## URL to update the Kanban data
+* ##addBoardButton## display the add Board button (default true)
+* ##addItemButton## display the add Item button (default true)
+* ##removeBoardButton## display the remove Board button (default true)
+* ##removeBoardItem## allow removing Item by drag and dropping them out of a board (default true)
 
-Examples:
+== Example ==
 
-== Kanban of Ideas by priority with status and assignement fields ==
-
-{{kanban app="Ideas" category="priority" order="doc.date" columns="status,assignement" /}}
-
-== Kanban of Ideas by priority with status and assignement fields only open Ideas ==
-
-{{kanban app="Ideas" category="priority" order="doc.date" columns="status,assignement" xwql="obj.status='open'" /}}
-
-== Kanban of Ideas by priority with assignement only open Ideas ==
-
-{{kanban app="Ideas" category="assignement" order="doc.date" columns="status,priority" xwql="obj.status='open'" /}}
-
-== Kanban of Ideas by status without fields ==
-
-{{kanban app="Ideas" category="status" order="status" /}}
-
-== Kanban of Ideas by status with priority field ==
-
-{{kanban app="Ideas" category="status" order="status" columns="priority" /}}
-
-== Kanban of Ideas using class by priority ==
-
-{{kanban className="Ideas.IdeasClass" category="priority" order="status" title="status" /}}
-</content>
+{{kanban}}
+[{"id":"todo","title":"To Do","color":"red","item":[{"title":"Item 2"}]},{"id":"working","title":"Working","color":"red","item":[{"title":"Item 4"},{"title":"Item 4"},{"title":"Item 6"}]},{"id":"done","title":"Done","color":"green","item":[{"title":"Item 5b"},{"title":"Item 5"},{"title":"Item 1"}]}]
+{{/kanban}}</content>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.JavaScriptExtension</className>
-    <guid>a266eb11-89ea-46ff-a70b-2dedb547a468</guid>
+    <guid>b3b9c112-ba2a-4bf3-933e-79217a55a008</guid>
     <class>
       <name>XWiki.JavaScriptExtension</name>
       <customClass/>
@@ -161,53 +129,1631 @@ Examples:
       <cache>long</cache>
     </property>
     <property>
-      <code>require(["jquery", "$services.webjars.url('jquery-ui', 'jquery-ui.js')"], function(jQuery) {
-   jQuery(".kanban-sortable" ).sortable({ connectWith: ".kanban-sortable",  placeholder: "kanban-placeholder kanban-card-draggable" });
-   jQuery(".kanban-sortable" ).disableSelection();
-   jQuery(".kanban-droppable" ).droppable({
-      drop: function( event, ui ) {
-        var docname = ui.draggable.attr("docname");
-        var fieldname = ui.draggable.attr("fieldname");
-        var classname = ui.draggable.attr("classname");
-        var objnumber = ui.draggable.attr("objectnumber");
-        var newcategory = jQuery(event.target).attr("category");
-        var currentdoc = new XWiki.Document(XWiki.Model.resolve(docname, XWiki.EntityType.DOCUMENT));
-        var restURL = currentdoc.getRestURL() + "/objects/" + classname + "/0/properties/" + fieldname + "/";
-        var data = '&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;property xmlns="http://www.xwiki.org" name="defaultEditMode" type="String"&gt;&lt;value&gt;'
-              + newcategory + '&lt;/value&gt;&lt;/property&gt;'
-        jQuery.ajax({
-           url: restURL,
-           type: 'PUT',
-           data: data,
-           contentType: "application/xml",
-           success: function(result) {
-               #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
-               new XWiki.widgets.Notification('$success', 'info', '20');
-           },
-           error: function(result) {
-               #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
-               new XWiki.widgets.Notification('$error', 'error', '20');
-           }
-        });
-      }
-    });
-});</code>
+      <code>(function e(t, n, r) {
+    function s(o, u) {
+        if (!n[o]) {
+            if (!t[o]) {
+                var a = typeof require == "function" &amp;&amp; require;
+                if (!u &amp;&amp; a) return a(o, !0);
+                if (i) return i(o, !0);
+                var f = new Error("Cannot find module '" + o + "'");
+                throw f.code = "MODULE_NOT_FOUND", f
+            }
+            var l = n[o] = {
+                exports: {}
+            };
+            t[o][0].call(l.exports, function (e) {
+                var n = t[o][1][e];
+                return s(n ? n : e)
+            }, l, l.exports, e, t, n, r)
+        }
+        return n[o].exports
+    }
+    var i = typeof require == "function" &amp;&amp; require;
+    for (var o = 0; o &lt; r.length; o++) s(r[o]);
+    return s
+})({
+    1: [function (require, module, exports) {
+        /**
+         * jKanban
+         * Vanilla Javascript plugin for manage kanban boards
+         *
+         * @site: http://www.riccardotartaglia.it/jkanban/
+         * @author: Riccardo Tartaglia
+         */
+
+        //Require dragula
+        var dragula = require('dragula');
+
+        (function () {
+
+            this.jKanban = function () {
+                var self = this;
+                this.element = '';
+                this.container = '';
+                this.boardContainer = [];
+                this.dragula = dragula;
+                this.drake = '';
+                this.drakeBoard = '';
+                this.addItemButton = false;
+                this.buttonContent = '+';
+                defaults = {
+                    element: '',
+                    gutter: '15px',
+                    widthBoard: '250px',
+                    responsive: '700',
+                    colors: ["yellow", "green", "blue", "red", "orange"],
+                    boards: [],
+                    dragBoards: true,
+                    addItemButton: false,
+                    buttonContent: '+',
+                    dragEl: function (el, source) {},
+                    dragendEl: function (el) {},
+                    dropEl: function (el, target, source, sibling) {},
+                    dragBoard: function (el, source) {},
+                    dragendBoard: function (el) {},
+                    dropBoard: function (el, target, source, sibling) {},
+                    click: function (el) {},
+                    boardTitleclick: function (el, boardId) {},
+                    buttonClick: function (el, boardId) {},
+                    colorClick: function (el, boardId) {},
+                    removeClick: function (el, boardId) {},
+                    onChange: function () {},
+                    onBoardChange: function(elementId, boardId) {}
+                };
+
+                if (arguments[0] &amp;&amp; typeof arguments[0] === "object") {
+                    this.options = __extendDefaults(defaults, arguments[0]);
+                }
+
+                this.init = function () {
+                    // set initial boards
+                    __setBoard();
+                    //set drag with dragula
+                    if (window.innerWidth &gt; self.options.responsive) {
+
+                        //Init Drag Board
+                        self.drakeBoard = self.dragula([self.container], {
+                                moves: function (el, source, handle, sibling) {
+                                    if (!self.options.dragBoards) return false;
+                                    return (handle.classList.contains('kanban-board-header') || handle.classList.contains('kanban-title-board'));
+                                },
+                                accepts: function (el, target, source, sibling) {
+                                    return target.classList.contains('kanban-container');
+                                },
+                                revertOnSpill: true,
+                                direction: 'horizontal',
+                            })
+                            .on('drag', function (el, source) {
+                                el.classList.add('is-moving');
+                                self.options.dragBoard(el, source);
+                                if (typeof (el.dragfn) === 'function')
+                                    el.dragfn(el, source);
+                            })
+                            .on('dragend', function (el) {
+                                el.classList.remove('is-moving');
+                                self.options.dragendBoard(el);
+                                if (typeof (el.dragendfn) === 'function')
+                                    el.dragendfn(el);
+                            })
+                            .on('drop', function (el, target, source, sibling) {
+                                el.classList.remove('is-moving');
+                                self.options.dropBoard(el, target, source, sibling);
+                                if (typeof (el.dropfn) === 'function')
+                                    el.dropfn(el, target, source, sibling);
+
+                                // TODO: update board object board order
+                                console.log("Drop " + jQuery(el).attr("data-id") + " just before " + (sibling ? jQuery(sibling).attr("data-id") : " end "));
+                                var index1 = self.options.boards.findIndex(function (element) {
+                                    return element.id == jQuery(el).attr("data-id");
+                                });
+                                var index2 = sibling ? self.options.boards.findIndex(function (element) {
+                                    return element.id == jQuery(sibling).attr("data-id");
+                                }) : self.options.boards.length;
+                                console.log("Switch " + index1 + " and " + index2);
+                                if (index1 &lt; index2)
+                                    index2 = index2 - 1;
+                                self.options.boards.splice(index2, 0, self.options.boards.splice(index1, 1)[0]);
+                                // send event that board has changed
+                                self.onChange();
+
+                            });
+
+                        //Init Drag Item
+                        self.drake = self.dragula(self.boardContainer, function () {
+                                revertOnSpill: true
+                            })
+                            .on('drag', function (el, source) {
+                                // we need to calculate the position before starting to drag
+                                self.dragItemPos = self.findElementPosition(el);
+
+                                el.classList.add('is-moving');
+                                var boardJSON = __findBoardJSON(source.parentNode.dataset.id);
+                                if (boardJSON.dragTo !== undefined) {
+                                    self.options.boards.map(function (board) {
+                                        if (boardJSON.dragTo.indexOf(board.id) === -1 &amp;&amp; board.id !== source.parentNode.dataset.id) {
+                                            self.findBoard(board.id).classList.add('disabled-board');
+                                        }
+                                    })
+                                }
+
+                                self.options.dragEl(el, source);
+                                if (el !== null &amp;&amp; typeof (el.dragfn) === 'function')
+                                    el.dragfn(el, source);
+                            })
+                            .on('dragend', function (el) {
+                                console.log("In dragend");
+                                self.options.dragendEl(el);
+                                if (el !== null &amp;&amp; typeof (el.dragendfn) === 'function')
+                                    el.dragendfn(el);
+                            })
+                            .on('cancel', function (el, container, source) {
+                                console.log("In cancel");
+                                if (self.options.addRemoveButton) {
+                                  if (confirm("Do you want to remove this item?")) {
+                                    var board1 = self.options.boards.find(function (element) {
+                                        return element.id == jQuery(source.parentNode).attr("data-id");
+                                    });
+                                    var pos1 = self.dragItemPos;
+                                    board1.item.splice(pos1, 1);
+                                    jQuery(el).remove();
+                                    self.onChange();
+                                  }
+                                }
+                            })
+                            .on('drop', function (el, target, source, sibling) {
+                                console.log("In drop");
+
+                                // TODO: update board object board order
+                                var board1 = self.options.boards.find(function (element) {
+                                    return element.id == jQuery(source.parentNode).attr("data-id");
+                                });
+                                var board2 = self.options.boards.find(function (element) {
+                                    return element.id == jQuery(target.parentNode).attr("data-id");
+                                });
+                                var pos1 = self.dragItemPos;
+                                var pos2 = (sibling) ? self.findElementPosition(sibling) : (board2.item.length + 1);
+                                console.log("Drop element " + pos1 + " before " + pos2);
+ 
+                                // TODO: update board object item order
+
+                                var allB = document.querySelectorAll('.kanban-board');
+                                if (allB.length &gt; 0 &amp;&amp; allB !== undefined) {
+                                    for (var i = 0; i &lt; allB.length; i++) {
+                                        allB[i].classList.remove('disabled-board');
+                                    }
+                                }
+                                var boardJSON = __findBoardJSON(source.parentNode.dataset.id);
+                                if (boardJSON.dragTo !== undefined) {
+                                    if (boardJSON.dragTo.indexOf(target.parentNode.dataset.id) === -1 &amp;&amp; target.parentNode.dataset.id !== source.parentNode.dataset.id) {
+                                        self.drake.cancel(true)
+                                    }
+                                }
+                                if (el !== null) {
+                                    self.options.dropEl(el, target, source, sibling);
+                                    el.classList.remove('is-moving');
+                                    if (typeof (el.dropfn) === 'function')
+                                        el.dropfn(el, target, source, sibling);
+                                }
+
+                                var item = board1.item[pos1];
+                                console.log("Drop item " + item.id + " in " + board2.id);
+                               // if (board1==board2 &amp;&amp; pos2&lt;pos1)
+                                //   pos2 = pos2;
+
+                                // moving element to target array   
+                                board1.item.splice(pos1, 1);
+                                board2.item.splice(pos2 - 1, 0, item);
+
+                                // send event that board has changed
+                                self.onChange();
+                                self.options.onBoardChange(item.id, board2.id);
+                            })
+                    }
+                };
+
+                this.addElement = function (boardID, element) {
+
+                    // add Element to JSON        
+                    var boardJSON = __findBoardJSON(boardID);
+                    boardJSON.item.push({
+                        title: element.title
+                    });
+                    var board = self.element.querySelector('[data-id="' + boardID + '"] .kanban-drag');
+                    var nodeItem = document.createElement('div');
+                    nodeItem.classList.add('kanban-item');
+                    if (element.id) {
+                        nodeItem.setAttribute('data-eid', element.id)
+                    }
+                    nodeItem.innerHTML = element.title;
+                    //add function
+                    nodeItem.clickfn = element.click;
+                    nodeItem.dragfn = element.drag;
+                    nodeItem.dragendfn = element.dragend;
+                    nodeItem.dropfn = element.drop;
+                    __onclickHandler(nodeItem);
+                    board.appendChild(nodeItem);
+                    // send event that board has changed
+                    self.onChange();
+                    return self;
+                };
+
+                this.addForm = function (boardID, formItem) {
+                    var board = self.element.querySelector('[data-id="' + boardID + '"] .kanban-drag');
+                    board.appendChild(formItem);
+                    return self;
+                };
+
+                this.addBoards = function (boards) {
+                    var boardWidth = self.options.widthBoard;
+                    var addButton = self.options.addItemButton;
+                    var removeBoardButton = self.options.removeBoardButton;
+                    var buttonContent = self.options.buttonContent;
+
+
+                    //for on all the boards
+                    for (var j = 0; j &lt; boards.length; j++) {
+                        // single board
+                        var board = boards[j];
+                        if (self.options.boards !== boards)
+                            self.options.boards.push(board);
+
+                        //add width to container
+                        /*if (self.container.style.width === '') {
+                            self.container.style.width = parseInt(boardWidth) + (parseInt(self.options.gutter) * 2) + 'px';
+                        } else {
+                            self.container.style.width = parseInt(self.container.style.width) + parseInt(boardWidth) + (parseInt(self.options.gutter) * 2) + 'px';
+                        }*/
+
+                        //create node
+                        var boardNode = document.createElement('div');
+                        boardNode.dataset.id = board.id;
+                        boardNode.classList.add('kanban-board');
+                        //set style
+                        boardNode.style.width = boardWidth;
+                        boardNode.style.marginLeft = self.options.gutter;
+                        boardNode.style.marginRight = self.options.gutter;
+                        // header board
+                        var headerBoard = document.createElement('header');
+                        if (board.class !== '' &amp;&amp; board.class !== undefined)
+                            var allClasses = board.class.split(",");
+                        else allClasses = [];
+                        headerBoard.classList.add('kanban-board-header');
+                        allClasses.map(function (value) {
+                            headerBoard.classList.add(value);
+                        });
+                        if (board.color !== '' &amp;&amp; board.color !== undefined) {
+                            headerBoard.classList.add("kanban-header-" + board.color);
+                        }
+                        titleBoard = document.createElement('div');
+                        titleBoard.classList.add('kanban-title-board');
+                        titleBoard.innerHTML = board.title;
+                        titleBoard.clickfn = board.boardTitleClick;
+                        __onboardTitleClickHandler(titleBoard);
+                        headerBoard.appendChild(titleBoard);
+                        __onColorClickHandler(headerBoard);
+
+                        // if add button is true, add button to the board
+                        if (addButton) {
+                            var btn = document.createElement("BUTTON");
+                            var t = document.createTextNode(buttonContent);
+                            btn.setAttribute("class", "kanban-title-button btn btn-default btn-xs");
+                            btn.appendChild(t);
+                            //var buttonHtml = '&lt;button class="kanban-title-button btn btn-default btn-xs"&gt;'+buttonContent+'&lt;/button&gt;'
+                            headerBoard.appendChild(btn);
+                            __onButtonClickHandler(btn, board.id);
+                        }
+                        //content board
+                        var contentBoard = document.createElement('main');
+                        contentBoard.classList.add('kanban-drag');
+                        //add drag to array for dragula
+                        self.boardContainer.push(contentBoard);
+                        for (var i = 0; i &lt; board.item.length; i++) {
+                            //create item
+                            var itemKanban = board.item[i];
+                            var nodeItem = document.createElement('div');
+                            nodeItem.classList.add('kanban-item');
+                            //add function
+                            nodeItem.dragfn = itemKanban.drag;
+                            nodeItem.dragendfn = itemKanban.dragend;
+                            nodeItem.dropfn = itemKanban.drop;
+                            nodeItem.dataset.eid = itemKanban.id;
+
+                            var nodeItemTitle = document.createElement('div');
+                            nodeItemTitle.classList.add('kanban-item-title');
+                            nodeItemTitle.innerHTML = itemKanban.title;
+                            nodeItemTitle.clickfn = itemKanban.click; 
+                            if (itemKanban.url) {
+                              nodeItemTitle.addEventListener('click', function (e) {
+                                 location = itemKanban.url;
+                              });
+                            } else {
+                              // add click handler of item
+                              __onclickHandler(nodeItemTitle);
+                            }
+                            nodeItem.appendChild(nodeItemTitle);
+
+                            if (itemKanban.content) {
+                             var nodeItemContent = document.createElement('div');
+                             nodeItemContent.classList.add('kanban-item-content');
+                             nodeItemContent.innerHTML = itemKanban.content;
+                             nodeItem.appendChild(nodeItemContent);
+                            }
+                            contentBoard.appendChild(nodeItem);
+                        }
+                        //footer board
+                        var footerBoard = document.createElement('footer');
+                        //remove button
+                        if (removeBoardButton) {
+                         var removeBoard = document.createElement('div');
+                         jQuery(removeBoard).text("-")
+                         jQuery(removeBoard).addClass("kanban-removeboard");
+                         footerBoard.appendChild(removeBoard);
+                         __onRemoveClickHandler(removeBoard);
+                        }
+
+                        //board assembly
+                        boardNode.appendChild(headerBoard);
+                        boardNode.appendChild(contentBoard);
+                        boardNode.appendChild(footerBoard);
+                        //board add
+                        self.container.appendChild(boardNode);
+                    }
+
+                    // send event that board has changed
+                    self.onChange();
+
+                    return self;
+                }
+
+                this.setBoards = function (boards) {
+                    for (var boardkey in boards) {
+                        // single board
+                        var board = boards[boardkey];
+                        this.removeBoard(board.id);
+                    }
+                    this.options.boards = [];
+                    this.addBoards(boards);
+                }
+
+                this.findBoard = function (id) {
+                    var el = self.element.querySelector('[data-id="' + id + '"]');
+                    return el;
+                }
+
+                this.findElement = function (id) {
+                    var el = self.element.querySelector('[data-eid="' + id + '"]');
+                    return el;
+                }
+
+                this.findElementPosition = function (el) {
+                    // we are looking at the element position in the child array
+                    return jQuery(el.parentNode.children).index(el);
+                }
+
+                this.getBoardElements = function (id) {
+                    var board = self.element.querySelector('[data-id="' + id + '"] .kanban-drag');
+                    return (board.childNodes);
+                }
+
+                this.removeElement = function (el) {
+                    if (typeof (el) === 'string')
+                        el = self.element.querySelector('[data-eid="' + el + '"]');
+                    el.remove();
+
+                    // send event that board has changed
+                    self.onChange();
+
+                    return self;
+                };
+
+                this.removeBoard = function (board) {
+                    if (typeof (board) === 'string')
+                        board = self.element.querySelector('[data-id="' + board + '"]');
+                    if (board) {
+                        board.remove();
+
+                        // send event that board has changed
+                        self.onChange();
+                    }
+
+                    return self;
+                }
+
+                // board button on click function
+                this.onButtonClick = function (el) {
+
+                }
+
+                this.onChange = function () {
+                    self.options.onChange();
+                }
+
+                this.getBoardsJSON = function (id) {
+                    return self.options.boards;
+                }
+
+                this.getBoardJSON = function (id) {
+                    return __findBoardJSON(id);
+                }
+
+                //PRIVATE FUNCTION
+                function __extendDefaults(source, properties) {
+                    var property;
+                    for (property in properties) {
+                        if (properties.hasOwnProperty(property)) {
+                            source[property] = properties[property];
+                        }
+                    }
+                    return source;
+                }
+
+                function __addBoard() { 
+                  var counter = 1;
+                  found = false;
+                  while (found) {
+                   for (var board in kanban.options.boards) {
+                     if (board.id == "board" + counter) {
+                        counter++;
+                        break;
+                     }
+                   }
+                 found = true;
+                 }
+
+                 self.addBoards([{
+                    "id": "board" + counter,
+                    "title": "New Board",
+                    "color": "yellow",
+                    "item": [{ "title": "Item 1" }]}]
+                 )
+                 self.onChange();
+                }
+
+                function __setBoard() {
+                    var addBoardButton = self.options.addBoardButton;
+                    self.element = document.querySelector(self.options.element);
+                    //create container
+                    var boardContainerOuter = document.createElement('div');
+                    boardContainerOuter.classList.add('kanban-container-outer');
+                    var boardContainer = document.createElement('div');
+                    boardContainer.classList.add('kanban-container');
+                    boardContainerOuter.appendChild(boardContainer);
+                    if (addBoardButton) {
+                     var addBoard = document.createElement('div');
+                     addBoard.class = 'kanban-addboard';
+                     jQuery(addBoard).text("+");
+                     boardContainerOuter.appendChild(addBoard);
+                     __onAddBoardClickHandler(addBoard);
+                    }
+
+                    self.container = boardContainer;
+                    //add boards
+                    self.addBoards(self.options.boards);
+                    //appends to container
+                    self.element.appendChild(boardContainerOuter);
+
+                    // send event that board has changed
+                    self.onChange();
+                };
+
+                function __onclickHandler(nodeItem, clickfn) {
+                    nodeItem.addEventListener('click', function (e) {
+                        e.preventDefault;
+                        self.options.click(this);
+                        if (typeof (this.clickfn) === 'function')
+                            this.clickfn(this);
+                    });
+                }
+
+                function __onboardTitleClickHandler(nodeItem, clickfn) {
+                    nodeItem.addEventListener('click', function (e) {
+                        e.preventDefault;
+                        self.options.boardTitleClick(this);
+                        if (typeof (this.clickfn) === 'function')
+                            this.clickfn(this);
+                    });
+                }
+
+                function __onColorClickHandler(nodeItem, clickfn) {
+                    nodeItem.addEventListener('click', function (e) {
+                        e.preventDefault;
+                        self.options.colorClick(this);
+                        if (typeof (this.clickfn) === 'function')
+                            this.clickfn(this);
+                    });
+                }
+
+                function __onRemoveClickHandler(nodeItem, clickfn) {
+                    nodeItem.addEventListener('click', function (e) {
+                        e.preventDefault;
+                        self.options.removeClick(this);
+                        if (typeof (this.clickfn) === 'function')
+                            this.clickfn(this);
+                    });
+                }
+
+                function __onButtonClickHandler(nodeItem, boardId) {
+                    nodeItem.addEventListener('click', function (e) {
+                        e.preventDefault;
+                        self.options.buttonClick(this, boardId);
+                        // if(typeof(this.clickfn) === 'function')
+                        //     this.clickfn(this);
+                    });
+                }
+
+                function __onAddBoardClickHandler(nodeItem) {
+                    nodeItem.addEventListener('click', function (e) {
+                        e.preventDefault;
+                        __addBoard();
+                    });
+                }
+
+                function __findBoardJSON(id) {
+                    var el = []
+                    self.options.boards.map(function (board) {
+                        if (board.id === id) {
+                            return el.push(board)
+                        }
+                    })
+                    return el[0]
+                }
+
+
+                //init plugin
+                this.init();
+            };
+        }());
+
+
+}, {
+        "dragula": 9
+    }],
+    2: [function (require, module, exports) {
+        module.exports = function atoa(a, n) {
+            return Array.prototype.slice.call(a, n);
+        }
+
+}, {}],
+    3: [function (require, module, exports) {
+        'use strict';
+
+        var ticky = require('ticky');
+
+        module.exports = function debounce(fn, args, ctx) {
+            if (!fn) {
+                return;
+            }
+            ticky(function run() {
+                fn.apply(ctx || null, args || []);
+            });
+        };
+
+}, {
+        "ticky": 10
+    }],
+    4: [function (require, module, exports) {
+        'use strict';
+
+        var atoa = require('atoa');
+        var debounce = require('./debounce');
+
+        module.exports = function emitter(thing, options) {
+            var opts = options || {};
+            var evt = {};
+            if (thing === undefined) {
+                thing = {};
+            }
+            thing.on = function (type, fn) {
+                if (!evt[type]) {
+                    evt[type] = [fn];
+                } else {
+                    evt[type].push(fn);
+                }
+                return thing;
+            };
+            thing.once = function (type, fn) {
+                fn._once = true; // thing.off(fn) still works!
+                thing.on(type, fn);
+                return thing;
+            };
+            thing.off = function (type, fn) {
+                var c = arguments.length;
+                if (c === 1) {
+                    delete evt[type];
+                } else if (c === 0) {
+                    evt = {};
+                } else {
+                    var et = evt[type];
+                    if (!et) {
+                        return thing;
+                    }
+                    et.splice(et.indexOf(fn), 1);
+                }
+                return thing;
+            };
+            thing.emit = function () {
+                var args = atoa(arguments);
+                return thing.emitterSnapshot(args.shift()).apply(this, args);
+            };
+            thing.emitterSnapshot = function (type) {
+                var et = (evt[type] || []).slice(0);
+                return function () {
+                    var args = atoa(arguments);
+                    var ctx = this || thing;
+                    if (type === 'error' &amp;&amp; opts.throws !== false &amp;&amp; !et.length) {
+                        throw args.length === 1 ? args[0] : args;
+                    }
+                    et.forEach(function emitter(listen) {
+                        if (opts.async) {
+                            debounce(listen, args, ctx);
+                        } else {
+                            listen.apply(ctx, args);
+                        }
+                        if (listen._once) {
+                            thing.off(type, listen);
+                        }
+                    });
+                    return thing;
+                };
+            };
+            return thing;
+        };
+
+}, {
+        "./debounce": 3,
+        "atoa": 2
+    }],
+    5: [function (require, module, exports) {
+        (function (global) {
+            'use strict';
+
+            var customEvent = require('custom-event');
+            var eventmap = require('./eventmap');
+            var doc = global.document;
+            var addEvent = addEventEasy;
+            var removeEvent = removeEventEasy;
+            var hardCache = [];
+
+            if (!global.addEventListener) {
+                addEvent = addEventHard;
+                removeEvent = removeEventHard;
+            }
+
+            module.exports = {
+                add: addEvent,
+                remove: removeEvent,
+                fabricate: fabricateEvent
+            };
+
+            function addEventEasy(el, type, fn, capturing) {
+                return el.addEventListener(type, fn, capturing);
+            }
+
+            function addEventHard(el, type, fn) {
+                return el.attachEvent('on' + type, wrap(el, type, fn));
+            }
+
+            function removeEventEasy(el, type, fn, capturing) {
+                return el.removeEventListener(type, fn, capturing);
+            }
+
+            function removeEventHard(el, type, fn) {
+                var listener = unwrap(el, type, fn);
+                if (listener) {
+                    return el.detachEvent('on' + type, listener);
+                }
+            }
+
+            function fabricateEvent(el, type, model) {
+                var e = eventmap.indexOf(type) === -1 ? makeCustomEvent() : makeClassicEvent();
+                if (el.dispatchEvent) {
+                    el.dispatchEvent(e);
+                } else {
+                    el.fireEvent('on' + type, e);
+                }
+
+                function makeClassicEvent() {
+                    var e;
+                    if (doc.createEvent) {
+                        e = doc.createEvent('Event');
+                        e.initEvent(type, true, true);
+                    } else if (doc.createEventObject) {
+                        e = doc.createEventObject();
+                    }
+                    return e;
+                }
+
+                function makeCustomEvent() {
+                    return new customEvent(type, {
+                        detail: model
+                    });
+                }
+            }
+
+            function wrapperFactory(el, type, fn) {
+                return function wrapper(originalEvent) {
+                    var e = originalEvent || global.event;
+                    e.target = e.target || e.srcElement;
+                    e.preventDefault = e.preventDefault || function preventDefault() {
+                        e.returnValue = false;
+                    };
+                    e.stopPropagation = e.stopPropagation || function stopPropagation() {
+                        e.cancelBubble = true;
+                    };
+                    e.which = e.which || e.keyCode;
+                    fn.call(el, e);
+                };
+            }
+
+            function wrap(el, type, fn) {
+                var wrapper = unwrap(el, type, fn) || wrapperFactory(el, type, fn);
+                hardCache.push({
+                    wrapper: wrapper,
+                    element: el,
+                    type: type,
+                    fn: fn
+                });
+                return wrapper;
+            }
+
+            function unwrap(el, type, fn) {
+                var i = find(el, type, fn);
+                if (i) {
+                    var wrapper = hardCache[i].wrapper;
+                    hardCache.splice(i, 1); // free up a tad of memory
+                    return wrapper;
+                }
+            }
+
+            function find(el, type, fn) {
+                var i, item;
+                for (i = 0; i &lt; hardCache.length; i++) {
+                    item = hardCache[i];
+                    if (item.element === el &amp;&amp; item.type === type &amp;&amp; item.fn === fn) {
+                        return i;
+                    }
+                }
+            }
+
+        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}, {
+        "./eventmap": 6,
+        "custom-event": 7
+    }],
+    6: [function (require, module, exports) {
+        (function (global) {
+            'use strict';
+
+            var eventmap = [];
+            var eventname = '';
+            var ron = /^on/;
+
+            for (eventname in global) {
+                if (ron.test(eventname)) {
+                    eventmap.push(eventname.slice(2));
+                }
+            }
+
+            module.exports = eventmap;
+
+        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}, {}],
+    7: [function (require, module, exports) {
+        (function (global) {
+
+            var NativeCustomEvent = global.CustomEvent;
+
+            function useNative() {
+                try {
+                    var p = new NativeCustomEvent('cat', {
+                        detail: {
+                            foo: 'bar'
+                        }
+                    });
+                    return 'cat' === p.type &amp;&amp; 'bar' === p.detail.foo;
+                } catch (e) {}
+                return false;
+            }
+
+            /**
+             * Cross-browser `CustomEvent` constructor.
+             *
+             * https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent.CustomEvent
+             *
+             * @public
+             */
+
+            module.exports = useNative() ? NativeCustomEvent :
+
+                // IE &gt;= 9
+                'function' === typeof document.createEvent ? function CustomEvent(type, params) {
+                    var e = document.createEvent('CustomEvent');
+                    if (params) {
+                        e.initCustomEvent(type, params.bubbles, params.cancelable, params.detail);
+                    } else {
+                        e.initCustomEvent(type, false, false, void 0);
+                    }
+                    return e;
+                } :
+
+                // IE &lt;= 8
+                function CustomEvent(type, params) {
+                    var e = document.createEventObject();
+                    e.type = type;
+                    if (params) {
+                        e.bubbles = Boolean(params.bubbles);
+                        e.cancelable = Boolean(params.cancelable);
+                        e.detail = params.detail;
+                    } else {
+                        e.bubbles = false;
+                        e.cancelable = false;
+                        e.detail = void 0;
+                    }
+                    return e;
+                }
+
+        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}, {}],
+    8: [function (require, module, exports) {
+        'use strict';
+
+        var cache = {};
+        var start = '(?:^|\\s)';
+        var end = '(?:\\s|$)';
+
+        function lookupClass(className) {
+            var cached = cache[className];
+            if (cached) {
+                cached.lastIndex = 0;
+            } else {
+                cache[className] = cached = new RegExp(start + className + end, 'g');
+            }
+            return cached;
+        }
+
+        function addClass(el, className) {
+            var current = el.className;
+            if (!current.length) {
+                el.className = className;
+            } else if (!lookupClass(className).test(current)) {
+                el.className += ' ' + className;
+            }
+        }
+
+        function rmClass(el, className) {
+            el.className = el.className.replace(lookupClass(className), ' ').trim();
+        }
+
+        module.exports = {
+            add: addClass,
+            rm: rmClass
+        };
+
+}, {}],
+    9: [function (require, module, exports) {
+        (function (global) {
+            'use strict';
+
+            var emitter = require('contra/emitter');
+            var crossvent = require('crossvent');
+            var classes = require('./classes');
+            var doc = document;
+            var documentElement = doc.documentElement;
+
+            function dragula(initialContainers, options) {
+                var len = arguments.length;
+                if (len === 1 &amp;&amp; Array.isArray(initialContainers) === false) {
+                    options = initialContainers;
+                    initialContainers = [];
+                }
+                var _mirror; // mirror image
+                var _source; // source container
+                var _item; // item being dragged
+                var _offsetX; // reference x
+                var _offsetY; // reference y
+                var _moveX; // reference move x
+                var _moveY; // reference move y
+                var _initialSibling; // reference sibling when grabbed
+                var _currentSibling; // reference sibling now
+                var _copy; // item used for copying
+                var _renderTimer; // timer for setTimeout renderMirrorImage
+                var _lastDropTarget = null; // last container item was over
+                var _grabbed; // holds mousedown context until first mousemove
+
+                var o = options || {};
+                if (o.moves === void 0) {
+                    o.moves = always;
+                }
+                if (o.accepts === void 0) {
+                    o.accepts = always;
+                }
+                if (o.invalid === void 0) {
+                    o.invalid = invalidTarget;
+                }
+                if (o.containers === void 0) {
+                    o.containers = initialContainers || [];
+                }
+                if (o.isContainer === void 0) {
+                    o.isContainer = never;
+                }
+                if (o.copy === void 0) {
+                    o.copy = false;
+                }
+                if (o.copySortSource === void 0) {
+                    o.copySortSource = false;
+                }
+                if (o.revertOnSpill === void 0) {
+                    o.revertOnSpill = false;
+                }
+                if (o.removeOnSpill === void 0) {
+                    o.removeOnSpill = false;
+                }
+                if (o.direction === void 0) {
+                    o.direction = 'vertical';
+                }
+                if (o.ignoreInputTextSelection === void 0) {
+                    o.ignoreInputTextSelection = true;
+                }
+                if (o.mirrorContainer === void 0) {
+                    o.mirrorContainer = doc.body;
+                }
+
+                var drake = emitter({
+                    containers: o.containers,
+                    start: manualStart,
+                    end: end,
+                    cancel: cancel,
+                    remove: remove,
+                    destroy: destroy,
+                    canMove: canMove,
+                    dragging: false
+                });
+
+                if (o.removeOnSpill === true) {
+                    drake.on('over', spillOver).on('out', spillOut);
+                }
+
+                events();
+
+                return drake;
+
+                function isContainer(el) {
+                    return drake.containers.indexOf(el) !== -1 || o.isContainer(el);
+                }
+
+                function events(remove) {
+                    var op = remove ? 'remove' : 'add';
+                    touchy(documentElement, op, 'mousedown', grab);
+                    touchy(documentElement, op, 'mouseup', release);
+                }
+
+                function eventualMovements(remove) {
+                    var op = remove ? 'remove' : 'add';
+                    touchy(documentElement, op, 'mousemove', startBecauseMouseMoved);
+                }
+
+                function movements(remove) {
+                    var op = remove ? 'remove' : 'add';
+                    crossvent[op](documentElement, 'selectstart', preventGrabbed); // IE8
+                    crossvent[op](documentElement, 'click', preventGrabbed);
+                }
+
+                function destroy() {
+                    events(true);
+                    release({});
+                }
+
+                function preventGrabbed(e) {
+                    if (_grabbed) {
+                        e.preventDefault();
+                    }
+                }
+
+                function grab(e) {
+                    _moveX = e.clientX;
+                    _moveY = e.clientY;
+
+                    var ignore = whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey;
+                    if (ignore) {
+                        return; // we only care about honest-to-god left clicks and touch events
+                    }
+                    var item = e.target;
+                    var context = canStart(item);
+                    if (!context) {
+                        return;
+                    }
+                    _grabbed = context;
+                    eventualMovements();
+                    if (e.type === 'mousedown') {
+                        if (isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
+                            item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+                        } else {
+                            e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
+                        }
+                    }
+                }
+
+                function startBecauseMouseMoved(e) {
+                    if (!_grabbed) {
+                        return;
+                    }
+                    if (whichMouseButton(e) === 0) {
+                        release({});
+                        return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
+                    }
+                    // truthy check fixes #239, equality fixes #207
+                    if (e.clientX !== void 0 &amp;&amp; e.clientX === _moveX &amp;&amp; e.clientY !== void 0 &amp;&amp; e.clientY === _moveY) {
+                        return;
+                    }
+                    if (o.ignoreInputTextSelection) {
+                        var clientX = getCoord('clientX', e);
+                        var clientY = getCoord('clientY', e);
+                        var elementBehindCursor = doc.elementFromPoint(clientX, clientY);
+                        if (isInput(elementBehindCursor)) {
+                            return;
+                        }
+                    }
+
+                    var grabbed = _grabbed; // call to end() unsets _grabbed
+                    eventualMovements(true);
+                    movements();
+                    end();
+                    start(grabbed);
+
+                    var offset = getOffset(_item);
+                    _offsetX = getCoord('pageX', e) - offset.left;
+                    _offsetY = getCoord('pageY', e) - offset.top;
+
+                    classes.add(_copy || _item, 'gu-transit');
+                    renderMirrorImage();
+                    drag(e);
+                }
+
+                function canStart(item) {
+                    if (drake.dragging &amp;&amp; _mirror) {
+                        return;
+                    }
+                    if (isContainer(item)) {
+                        return; // don't drag container itself
+                    }
+                    var handle = item;
+                    while (getParent(item) &amp;&amp; isContainer(getParent(item)) === false) {
+                        if (o.invalid(item, handle)) {
+                            return;
+                        }
+                        item = getParent(item); // drag target should be a top element
+                        if (!item) {
+                            return;
+                        }
+                    }
+                    var source = getParent(item);
+                    if (!source) {
+                        return;
+                    }
+                    if (o.invalid(item, handle)) {
+                        return;
+                    }
+
+                    var movable = o.moves(item, source, handle, nextEl(item));
+                    if (!movable) {
+                        return;
+                    }
+
+                    return {
+                        item: item,
+                        source: source
+                    };
+                }
+
+                function canMove(item) {
+                    return !!canStart(item);
+                }
+
+                function manualStart(item) {
+                    var context = canStart(item);
+                    if (context) {
+                        start(context);
+                    }
+                }
+
+                function start(context) {
+                    if (isCopy(context.item, context.source)) {
+                        _copy = context.item.cloneNode(true);
+                        drake.emit('cloned', _copy, context.item, 'copy');
+                    }
+
+                    _source = context.source;
+                    _item = context.item;
+                    _initialSibling = _currentSibling = nextEl(context.item);
+
+                    drake.dragging = true;
+                    drake.emit('drag', _item, _source);
+                }
+
+                function invalidTarget() {
+                    return false;
+                }
+
+                function end() {
+                    if (!drake.dragging) {
+                        return;
+                    }
+                    var item = _copy || _item;
+                    drop(item, getParent(item));
+                }
+
+                function ungrab() {
+                    _grabbed = false;
+                    eventualMovements(true);
+                    movements(true);
+                }
+
+                function release(e) {
+                    ungrab();
+
+                    if (!drake.dragging) {
+                        return;
+                    }
+                    var item = _copy || _item;
+                    var clientX = getCoord('clientX', e);
+                    var clientY = getCoord('clientY', e);
+                    var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
+                    var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+                    if (dropTarget &amp;&amp; ((_copy &amp;&amp; o.copySortSource) || (!_copy || dropTarget !== _source))) {
+                        drop(item, dropTarget);
+                    } else if (o.removeOnSpill) {
+                        remove();
+                    } else {
+                        cancel();
+                    }
+                }
+
+                function drop(item, target) {
+                    var parent = getParent(item);
+                    if (_copy &amp;&amp; o.copySortSource &amp;&amp; target === _source) {
+                        parent.removeChild(_item);
+                    }
+                    if (isInitialPlacement(target)) {
+                        drake.emit('cancel', item, _source, _source);
+                    } else {
+                        drake.emit('drop', item, target, _source, _currentSibling);
+                    }
+                    cleanup();
+                }
+
+                function remove() {
+                    if (!drake.dragging) {
+                        return;
+                    }
+                    var item = _copy || _item;
+                    var parent = getParent(item);
+                    if (parent) {
+                        parent.removeChild(item);
+                    }
+                    drake.emit(_copy ? 'cancel' : 'remove', item, parent, _source);
+                    cleanup();
+                }
+
+                function cancel(revert) {
+                    if (!drake.dragging) {
+                        return;
+                    }
+                    var reverts = arguments.length &gt; 0 ? revert : o.revertOnSpill;
+                    var item = _copy || _item;
+                    var parent = getParent(item);
+                    var initial = isInitialPlacement(parent);
+                    if (initial === false &amp;&amp; reverts) {
+                        if (_copy) {
+                            if (parent) {
+                                parent.removeChild(_copy);
+                            }
+                        } else {
+                            _source.insertBefore(item, _initialSibling);
+                        }
+                    }
+                    if (initial || reverts) {
+                        drake.emit('cancel', item, _source, _source);
+                    } else {
+                        drake.emit('drop', item, parent, _source, _currentSibling);
+                    }
+                    cleanup();
+                }
+
+                function cleanup() {
+                    var item = _copy || _item;
+                    ungrab();
+                    removeMirrorImage();
+                    if (item) {
+                        classes.rm(item, 'gu-transit');
+                    }
+                    if (_renderTimer) {
+                        clearTimeout(_renderTimer);
+                    }
+                    drake.dragging = false;
+                    if (_lastDropTarget) {
+                        drake.emit('out', item, _lastDropTarget, _source);
+                    }
+                    drake.emit('dragend', item);
+                    _source = _item = _copy = _initialSibling = _currentSibling = _renderTimer = _lastDropTarget = null;
+                }
+
+                function isInitialPlacement(target, s) {
+                    var sibling;
+                    if (s !== void 0) {
+                        sibling = s;
+                    } else if (_mirror) {
+                        sibling = _currentSibling;
+                    } else {
+                        sibling = nextEl(_copy || _item);
+                    }
+                    return target === _source &amp;&amp; sibling === _initialSibling;
+                }
+
+                function findDropTarget(elementBehindCursor, clientX, clientY) {
+                    var target = elementBehindCursor;
+                    while (target &amp;&amp; !accepted()) {
+                        target = getParent(target);
+                    }
+                    return target;
+
+                    function accepted() {
+                        var droppable = isContainer(target);
+                        if (droppable === false) {
+                            return false;
+                        }
+
+                        var immediate = getImmediateChild(target, elementBehindCursor);
+                        var reference = getReference(target, immediate, clientX, clientY);
+                        var initial = isInitialPlacement(target, reference);
+                        if (initial) {
+                            return true; // should always be able to drop it right back where it was
+                        }
+                        return o.accepts(_item, target, _source, reference);
+                    }
+                }
+
+                function drag(e) {
+                    if (!_mirror) {
+                        return;
+                    }
+                    e.preventDefault();
+
+                    var clientX = getCoord('clientX', e);
+                    var clientY = getCoord('clientY', e);
+                    var x = clientX - _offsetX;
+                    var y = clientY - _offsetY;
+
+                    _mirror.style.left = x + 'px';
+                    _mirror.style.top = y + 'px';
+
+                    var item = _copy || _item;
+                    var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
+                    var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+                    var changed = dropTarget !== null &amp;&amp; dropTarget !== _lastDropTarget;
+                    if (changed || dropTarget === null) {
+                        out();
+                        _lastDropTarget = dropTarget;
+                        over();
+                    }
+                    var parent = getParent(item);
+                    if (dropTarget === _source &amp;&amp; _copy &amp;&amp; !o.copySortSource) {
+                        if (parent) {
+                            parent.removeChild(item);
+                        }
+                        return;
+                    }
+                    var reference;
+                    var immediate = getImmediateChild(dropTarget, elementBehindCursor);
+                    if (immediate !== null) {
+                        reference = getReference(dropTarget, immediate, clientX, clientY);
+                    } else if (o.revertOnSpill === true &amp;&amp; !_copy) {
+                        reference = _initialSibling;
+                        dropTarget = _source;
+                    } else {
+                        if (_copy &amp;&amp; parent) {
+                            parent.removeChild(item);
+                        }
+                        return;
+                    }
+                    if (
+                        (reference === null &amp;&amp; changed) ||
+                        reference !== item &amp;&amp;
+                        reference !== nextEl(item)
+                    ) {
+                        _currentSibling = reference;
+                        dropTarget.insertBefore(item, reference);
+                        drake.emit('shadow', item, dropTarget, _source);
+                    }
+
+                    function moved(type) {
+                        drake.emit(type, item, _lastDropTarget, _source);
+                    }
+
+                    function over() {
+                        if (changed) {
+                            moved('over');
+                        }
+                    }
+
+                    function out() {
+                        if (_lastDropTarget) {
+                            moved('out');
+                        }
+                    }
+                }
+
+                function spillOver(el) {
+                    classes.rm(el, 'gu-hide');
+                }
+
+                function spillOut(el) {
+                    if (drake.dragging) {
+                        classes.add(el, 'gu-hide');
+                    }
+                }
+
+                function renderMirrorImage() {
+                    if (_mirror) {
+                        return;
+                    }
+                    var rect = _item.getBoundingClientRect();
+                    _mirror = _item.cloneNode(true);
+                    _mirror.style.width = getRectWidth(rect) + 'px';
+                    _mirror.style.height = getRectHeight(rect) + 'px';
+                    classes.rm(_mirror, 'gu-transit');
+                    classes.add(_mirror, 'gu-mirror');
+                    o.mirrorContainer.appendChild(_mirror);
+                    touchy(documentElement, 'add', 'mousemove', drag);
+                    classes.add(o.mirrorContainer, 'gu-unselectable');
+                    drake.emit('cloned', _mirror, _item, 'mirror');
+                }
+
+                function removeMirrorImage() {
+                    if (_mirror) {
+                        classes.rm(o.mirrorContainer, 'gu-unselectable');
+                        touchy(documentElement, 'remove', 'mousemove', drag);
+                        getParent(_mirror).removeChild(_mirror);
+                        _mirror = null;
+                    }
+                }
+
+                function getImmediateChild(dropTarget, target) {
+                    var immediate = target;
+                    while (immediate !== dropTarget &amp;&amp; getParent(immediate) !== dropTarget) {
+                        immediate = getParent(immediate);
+                    }
+                    if (immediate === documentElement) {
+                        return null;
+                    }
+                    return immediate;
+                }
+
+                function getReference(dropTarget, target, x, y) {
+                    var horizontal = o.direction === 'horizontal';
+                    var reference = target !== dropTarget ? inside() : outside();
+                    return reference;
+
+                    function outside() { // slower, but able to figure out any position
+                        var len = dropTarget.children.length;
+                        var i;
+                        var el;
+                        var rect;
+                        for (i = 0; i &lt; len; i++) {
+                            el = dropTarget.children[i];
+                            rect = el.getBoundingClientRect();
+                            if (horizontal &amp;&amp; (rect.left + rect.width / 2) &gt; x) {
+                                return el;
+                            }
+                            if (!horizontal &amp;&amp; (rect.top + rect.height / 2) &gt; y) {
+                                return el;
+                            }
+                        }
+                        return null;
+                    }
+
+                    function inside() { // faster, but only available if dropped inside a child element
+                        var rect = target.getBoundingClientRect();
+                        if (horizontal) {
+                            return resolve(x &gt; rect.left + getRectWidth(rect) / 2);
+                        }
+                        return resolve(y &gt; rect.top + getRectHeight(rect) / 2);
+                    }
+
+                    function resolve(after) {
+                        return after ? nextEl(target) : target;
+                    }
+                }
+
+                function isCopy(item, container) {
+                    return typeof o.copy === 'boolean' ? o.copy : o.copy(item, container);
+                }
+            }
+
+            function touchy(el, op, type, fn) {
+                var touch = {
+                    mouseup: 'touchend',
+                    mousedown: 'touchstart',
+                    mousemove: 'touchmove'
+                };
+                var pointers = {
+                    mouseup: 'pointerup',
+                    mousedown: 'pointerdown',
+                    mousemove: 'pointermove'
+                };
+                var microsoft = {
+                    mouseup: 'MSPointerUp',
+                    mousedown: 'MSPointerDown',
+                    mousemove: 'MSPointerMove'
+                };
+                if (global.navigator.pointerEnabled) {
+                    crossvent[op](el, pointers[type], fn);
+                } else if (global.navigator.msPointerEnabled) {
+                    crossvent[op](el, microsoft[type], fn);
+                } else {
+                    crossvent[op](el, touch[type], fn);
+                    crossvent[op](el, type, fn);
+                }
+            }
+
+            function whichMouseButton(e) {
+                if (e.touches !== void 0) {
+                    return e.touches.length;
+                }
+                if (e.which !== void 0 &amp;&amp; e.which !== 0) {
+                    return e.which;
+                } // see https://github.com/bevacqua/dragula/issues/261
+                if (e.buttons !== void 0) {
+                    return e.buttons;
+                }
+                var button = e.button;
+                if (button !== void 0) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
+                    return button &amp; 1 ? 1 : button &amp; 2 ? 3 : (button &amp; 4 ? 2 : 0);
+                }
+            }
+
+            function getOffset(el) {
+                var rect = el.getBoundingClientRect();
+                return {
+                    left: rect.left + getScroll('scrollLeft', 'pageXOffset'),
+                    top: rect.top + getScroll('scrollTop', 'pageYOffset')
+                };
+            }
+
+            function getScroll(scrollProp, offsetProp) {
+                if (typeof global[offsetProp] !== 'undefined') {
+                    return global[offsetProp];
+                }
+                if (documentElement.clientHeight) {
+                    return documentElement[scrollProp];
+                }
+                return doc.body[scrollProp];
+            }
+
+            function getElementBehindPoint(point, x, y) {
+                var p = point || {};
+                var state = p.className;
+                var el;
+                p.className += ' gu-hide';
+                el = doc.elementFromPoint(x, y);
+                p.className = state;
+                return el;
+            }
+
+            function never() {
+                return false;
+            }
+
+            function always() {
+                return true;
+            }
+
+            function getRectWidth(rect) {
+                return rect.width || (rect.right - rect.left);
+            }
+
+            function getRectHeight(rect) {
+                return rect.height || (rect.bottom - rect.top);
+            }
+
+            function getParent(el) {
+                return el.parentNode === doc ? null : el.parentNode;
+            }
+
+            function isInput(el) {
+                return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || isEditable(el);
+            }
+
+            function isEditable(el) {
+                if (!el) {
+                    return false;
+                } // no parents were editable
+                if (el.contentEditable === 'false') {
+                    return false;
+                } // stop the lookup
+                if (el.contentEditable === 'true') {
+                    return true;
+                } // found a contentEditable element in the chain
+                return isEditable(getParent(el)); // contentEditable is set to 'inherit'
+            }
+
+            function nextEl(el) {
+                return el.nextElementSibling || manually();
+
+                function manually() {
+                    var sibling = el;
+                    do {
+                        sibling = sibling.nextSibling;
+                    } while (sibling &amp;&amp; sibling.nodeType !== 1);
+                    return sibling;
+                }
+            }
+
+            function getEventHost(e) {
+                // on touchend event, we have to use `e.changedTouches`
+                // see http://stackoverflow.com/questions/7192563/touchend-event-properties
+                // see https://github.com/bevacqua/dragula/issues/34
+                if (e.targetTouches &amp;&amp; e.targetTouches.length) {
+                    return e.targetTouches[0];
+                }
+                if (e.changedTouches &amp;&amp; e.changedTouches.length) {
+                    return e.changedTouches[0];
+                }
+                return e;
+            }
+
+            function getCoord(coord, e) {
+                var host = getEventHost(e);
+                var missMap = {
+                    pageX: 'clientX', // IE8
+                    pageY: 'clientY' // IE8
+                };
+                if (coord in missMap &amp;&amp; !(coord in host) &amp;&amp; missMap[coord] in host) {
+                    coord = missMap[coord];
+                }
+                return host[coord];
+            }
+
+            module.exports = dragula;
+
+        }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}, {
+        "./classes": 8,
+        "contra/emitter": 4,
+        "crossvent": 5
+    }],
+    10: [function (require, module, exports) {
+        var si = typeof setImmediate === 'function',
+            tick;
+        if (si) {
+            tick = function (fn) {
+                setImmediate(fn);
+            };
+        } else {
+            tick = function (fn) {
+                setTimeout(fn, 0);
+            };
+        }
+
+        module.exports = tick;
+}, {}]
+}, {}, [1]);</code>
     </property>
     <property>
-      <name>Drag and Drop UI</name>
+      <name>jkanban</name>
     </property>
     <property>
-      <parse>1</parse>
+      <parse/>
     </property>
     <property>
-      <use>currentPage</use>
+      <use>onDemand</use>
     </property>
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.StyleSheetExtension</className>
-    <guid>0f1cd4e4-94a6-4da7-a4ba-68175535f424</guid>
+    <guid>bf975226-a99e-4aa6-a674-5cce924a8530</guid>
     <class>
       <name>XWiki.StyleSheetExtension</name>
       <customClass/>
@@ -301,49 +1847,201 @@ Examples:
       <cache>long</cache>
     </property>
     <property>
-      <code>@import url("$services.webjars.url('jquery-ui', 'jquery-ui.min.css')");
-
-.kanban-board .panel .panel-title {
-  font-size: 120%;
-  font-weight: 700;
-
-}
-.kanban-board .panel .panel-body {
-  background: #fff;
-  min-height: 50px;
-  padding: 10px;
+      <code>.kanban-container-outer {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: scroll;
 }
 
-.kanban-board .panel {
-  background-color: #fff;
-  padding: 0px;
+.kanban-container {
+    width: 100%;
+    padding: 15px;
 }
 
-.kanban-card-draggable {
-  display: inline-block;
-  min-height: 50px;
-  width: 100%;
+.kanban-container * {
+    box-sizing: border-box;
 }
 
-.kanban-placeholder { 
-  display: inline-block;
-  min-height: 100px;
-  margin-bottom: 10px;
-  height: 100px; 
-  border: 1px dotted;
-  width: 100%;
+.kanban-container:after {
+    clear: both;
+    display: block;
+    content: "";
 }
-  
-</code>
+
+.kanban-board {
+    position: relative;
+    float: left;
+    background: #E2E4E6;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    margin: 10px;
+    vertical-align: top;
+}
+
+.kanban-board.disabled-board {
+    opacity: .3;
+}
+
+.kanban-board.is-moving.gu-mirror {
+    transform: rotate(3deg);
+}
+
+.kanban-board.is-moving.gu-mirror .kanban-drag {
+    overflow: hidden;
+    padding-right: 50px;
+}
+
+.kanban-board header {
+    font-size: 16px;
+    padding: 10px;
+}
+
+.kanban-board header .kanban-title-board {
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.kanban-board header .kanban-title-button {
+    float: right;
+    line-height: 1;
+    padding: .25rem .5rem;
+}
+
+.kanban-board .kanban-drag {
+    min-height: 200px;
+    padding: 20px;
+}
+
+.kanban-board:after {
+    clear: both;
+    display: block;
+    content: "";
+}
+
+.kanban-item {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.kanban-item-title {
+  margin: 5px;
+}
+
+.kanban-item:hover {
+    cursor: move;
+}
+
+.kanban-item-title:hover {
+  cursor: pointer;
+}
+
+.kanban-item:last-child {
+    margin: 0;
+}
+
+.kanban-item.is-moving.gu-mirror {
+    transform: rotate(3deg);
+    height: auto !important;
+}
+
+.card-field-title:after {
+  content : ":"
+}
+
+.card-field {
+  list-style-type: none;
+}
+
+.card-field-title {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.kanban-header-yellow {
+    background: #FC3;
+}
+
+.kanban-header-orange {
+    background: #F91;
+}
+
+.kanban-header-blue {
+    background: #0AC;
+}
+
+.kanban-header-red {
+    background: #E43;
+}
+
+.kanban-header-green {
+    background: #8C4;
+}
+
+.kanban-addboard {
+    float: left;
+    margin: 30px;
+    margin-right: 10px;
+    padding: 5px;
+    padding-top: 3;
+    padding-bottom: 3px;
+    border: 1px solid;
+    width: 30px;
+    text-align: center;
+    background: #d4d4e8;
+    font-weight: bold;
+}
+
+.kanban-removeboard {
+    float: right;
+    margin: 10px;
+    padding: 3px;
+    width: 30px;
+    text-align: center;
+    background: #eee;
+    font-weight: bold;
+}
+
+/* Dragula CSS  */
+
+.gu-mirror {
+    position: fixed !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+}
+
+.gu-hide {
+    display: none !important;
+}
+
+.gu-unselectable {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+.gu-transit {
+    opacity: 0.2 !important;
+    transform: rotate(0deg) !important;
+}
+
+.form-group {
+    text-align: right;
+    margin-button: 5px;
+}</code>
     </property>
     <property>
       <contentType>CSS</contentType>
     </property>
     <property>
-      <name>Kanban board style</name>
+      <name>jkanban</name>
     </property>
     <property>
-      <parse>1</parse>
+      <parse/>
     </property>
     <property>
       <use>onDemand</use>
@@ -351,9 +2049,9 @@ Examples:
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
-    <number>1</number>
+    <number>0</number>
     <className>XWiki.WikiMacroClass</className>
-    <guid>92855914-8531-4141-95c6-f65dbc320bf3</guid>
+    <guid>e475843e-5c13-4704-a9f8-d127d90df1e4</guid>
     <class>
       <name>XWiki.WikiMacroClass</name>
       <customClass/>
@@ -470,116 +2168,383 @@ Examples:
     </class>
     <property>
       <code>{{velocity}}
-#set($discard = $xwiki.jsx.use('Macros.KanbanMacro'))
-#set($discard = $xwiki.ssx.use('Macros.KanbanMacro'))
-## Display the tasks with column for each category
-#macro(displayCategories $categories $docLists)
-  (% class="kanban-board row" %)
-  (((
-    #foreach($categoryValue in $categories)
-     #set($fakedoc = $xwiki.getDocument("XWiki.FakeDocument"))
-     #set($fakeobj = $fakedoc.getObject($className, true))
-     #set($discard = $fakedoc.use($fakeobj))
-     #set($discard = $fakedoc.set($category, $categoryValue))
-     #set($scategoryValue = $fakedoc.display($category, "view"))
-     (% class="$cssClasses kanban-col-${categoryValue} kanban-droppable" category="${escapetool.xml($categoryValue)}" %)
-      (((
-        (% class="panel panel-default" %)
-        (((
-          (% class="panel-heading text-center" %)
-          (((
-            (% class="panel-title" %)(((${scategoryValue})))
-          )))
-          
-         {{html wiki=true clean="false"}}
-          &lt;ul class="panel-body kanban-sortable" category="${escapetool.xml($categoryValue)}"&gt;
-            #foreach($docname in $docLists.get($categoryValue))
-              &lt;li class= "kanban-card-draggable" docname="${escapetool.xml($docname)}" classname="${escapetool.xml($className)}" fieldname="${escapetool.xml($category)}"&gt;
-              {{kanbancard document="${docname}" title="$!{xcontext.macro.params.title}" columns="$!{xcontext.macro.params.columns}" /}}
-              &lt;/li&gt;
-            #end
-          &lt;/ul&gt;
-         {{/html}} 
-         
-        )))
-      )))
-    #end
-  )))
+#set($ok = $xwiki.ssx.use("Macros.KanbanMacro"))
+#if(!$kanbanCounter)
+ #set($kanbanCounter = 0)
+#else
+ #set($kanbanCounter = $kanbanCounter + 1)
 #end
-#set($app = $xcontext.macro.params.app)
-#set($cssClasses = $xcontext.macro.params.cssClasses)
-#set($className = $xcontext.macro.params.className)
-#if(!$className || $className=="")
- #set($appDoc = $xwiki.getDocument("${app}.WebHome"))
- #set($className = $appDoc.getValue("class"))
+{{html clean="false"}}
+&lt;div id="cp-app-kanban-${kanbanCounter}" class="cp-app-kanban"&gt;
+    &lt;div id="cp-app-kanban-editor-${kanbanCounter}" class="cp-app-kanban-editor"&gt;
+        &lt;div id="cp-app-kanban-container-${kanbanCounter}" class="cp-app-kanban-container"&gt;
+            &lt;div id="cp-app-kanban-content-${kanbanCounter}"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+require.config({
+  paths: {
+    jkanban: '$xwiki.getURL("Macros.KanbanMacro", "jsx", "language=${xcontext.language}")'
+  }
+});
+require(['jquery','jkanban'], function(jQuery) {
+       function initKanban(boards, updateService) {
+        var currentBoards = JSON.stringify(boards);
+        var kanban = window.kanban = new jKanban({
+            element: '#cp-app-kanban-content-${kanbanCounter}',
+            gutter: '15px',
+            widthBoard: '${xcontext.macro.params.width}',
+            onChange: function () {
+              if (updateService &amp;&amp; updateService!="") {
+                var newBoards = JSON.stringify(this.boards);
+                if (currentBoards!=newBoards) {
+                 console.log("Board object has changed " + counter);
+                 var posting = jQuery.post( updateService, { page : page, nb : counter, content : newBoards } );
+                 posting.done(function() {
+                    #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
+                    new XWiki.widgets.Notification('$success', 'info', '20');
+                    currentBoards = newBoards;
+                 });
+                 // TODO: need to save board back to XWiki
+                }
+              }
+            },
+            click: function (el) {
+                if (kanban.inEditMode) {
+                    console.log("An edit is already active");
+                    return;
+                }
+                kanban.inEditMode = true;
+                var name = jQuery(el).text();
+                jQuery(el).html('');
+                jQuery('&lt;input&gt;&lt;/input&gt;')
+                    .attr({
+                        'type': 'text',
+                        'name': 'text',
+                        'id': 'kanban_edit',
+                        'size': '30',
+                        'value': name
+                    })
+                    .appendTo(el);
+                jQuery('#kanban_edit').focus();
+                jQuery('#kanban_edit').blur(function () {
+                    var name = jQuery('#kanban_edit').val();
+                    jQuery(el).text(name);
+                    var board = jQuery(el.parentNode.parentNode.parentNode).attr("data-id");
+                    var pos = kanban.findElementPosition(el);
+                    console.log(pos);
+                    console.log(board);
+                    kanban.getBoardJSON(board).item[pos].title = name;
+                    kanban.onChange();
+                    kanban.inEditMode = false;
+                });
+
+            },
+            boardTitleClick: function (el) {
+                if (kanban.inEditMode) {
+                    console.log("An edit is already active");
+                    return;
+                }
+                kanban.inEditMode = true;
+                var name = jQuery(el).text();
+                jQuery(el).html('');
+                jQuery('&lt;input&gt;&lt;/input&gt;')
+                    .attr({
+                        'type': 'text',
+                        'name': 'text',
+                        'id': 'kanban_edit',
+                        'size': '30',
+                        'value': name
+                    })
+                    .appendTo(el);
+                jQuery('#kanban_edit').focus();
+                jQuery('#kanban_edit').blur(function () {
+                    var name = jQuery('#kanban_edit').val();
+                    jQuery(el).text(name);
+                    var board = jQuery(el.parentNode.parentNode).attr("data-id");
+                    kanban.getBoardJSON(board).title = name;
+                    kanban.onChange();
+                    kanban.inEditMode = false;
+                });
+
+            },
+            colorClick: function (el, boardId) {
+                console.log("in color click");
+                var board = jQuery(el.parentNode).attr("data-id");
+                var boardJSON = kanban.getBoardJSON(board);
+                var currentColor = boardJSON.color;
+                console.log("Current color " + currentColor);
+                var index = kanban.options.colors.findIndex(function (element) {
+                    return (element == currentColor)
+                }) + 1;
+                console.log("Next index " + index);
+                if (index &gt;= kanban.options.colors.length)
+                    index = 0;
+                var nextColor = kanban.options.colors[index];
+                console.log("Next color " + nextColor);
+                boardJSON.color = nextColor;
+                jQuery(el).removeClass("kanban-header-" + currentColor);
+                jQuery(el).addClass("kanban-header-" + nextColor);
+                kanban.onChange();
+            },
+            removeClick: function (el, boardId) {
+                if (confirm("Do you want to delete this board?")) {
+                    console.log("Delete board");
+                    var boardName = jQuery(el.parentNode.parentNode).attr("data-id");
+                    for (index in kanban.options.boards) {
+                        if (kanban.options.boards[index].id == boardName) {
+                            break;
+                        }
+                        index++;
+                    }
+                    kanban.options.boards.splice(index, 1);
+                    kanban.removeBoard(boardName);
+                    kanban.onChange();
+                }
+            },
+            buttonClick: function (el, boardId) {
+                console.log(el);
+                console.log(boardId);
+                // create a form to enter element 
+                var formItem = document.createElement('form');
+                formItem.setAttribute("class", "itemform");
+                formItem.innerHTML = '&lt;div class="form-group"&gt;&lt;textarea class="form-control" rows="2" autofocus&gt;&lt;/textarea&gt;&lt;/div&gt;&lt;div class="form-group"&gt;&lt;button type="submit" class="btn btn-primary btn-xs"&gt;Submit&lt;/button&gt;&lt;button type="button" id="CancelBtn" class="btn btn-default btn-xs pull-right"&gt;Cancel&lt;/button&gt;&lt;/div&gt;'
+
+                kanban.addForm(boardId, formItem);
+                formItem.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    var text = e.target[0].value
+                    kanban.addElement(boardId, {
+                        "title": text,
+                    })
+                    formItem.parentNode.removeChild(formItem);
+                });
+                document.getElementById('CancelBtn').onclick = function () {
+                    formItem.parentNode.removeChild(formItem)
+                }
+            },
+#if($xcontext.macro.params.awmupdatepath)            
+            onBoardChange: function(itemId, boardId) {
+                var currentdoc = new XWiki.Document(XWiki.Model.resolve(itemId, XWiki.EntityType.DOCUMENT));
+                var restURL = currentdoc.getRestURL() + "${xcontext.macro.params.awmupdatepath}";
+        var data = '&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;property xmlns="http://www.xwiki.org" name="defaultEditMode" type="String"&gt;&lt;value&gt;'
+              + boardId + '&lt;/value&gt;&lt;/property&gt;'
+                jQuery.ajax({ url: restURL, type: 'PUT', data: data, contentType: "application/xml",
+                              success: function(result) {
+                                #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
+                                new XWiki.widgets.Notification('$success', 'info', '20');
+                              },
+                              error: function(result) {
+                                #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
+                                new XWiki.widgets.Notification('$error', 'error', '20');
+                              }
+                 });
+            },
 #end
-#set($category = $xcontext.macro.params.category)
-#set($results = $services.query)
-#set($query = "from doc.object(${className}) as obj where doc.fullName not like '%Template'")
-#set($xwql = $xcontext.macro.params.xwql)
-#if($xwql &amp;&amp; $xwql!="")
- #set($query = "${query} and ${xwql}")
+#if($xcontext.macro.params.addItemButton)
+            addItemButton: ${xcontext.macro.params.addItemButton},
+#end            
+#if($xcontext.macro.params.addBoardButton)            
+            addBoardButton: ${xcontext.macro.params.addBoardButton},
 #end
-#set($order = $xcontext.macro.params.order)
-#if($order &amp;&amp; $order!="")
- #if($order.startsWith("doc"))
-  #set($query = "${query} order by ${order}")
- #else
-  #set($query = "${query} order by obj.${order}")
- #end
+#if($xcontext.macro.params.removeBoardButton)            
+            removeBoardButton: ${xcontext.macro.params.removeBoardButton},
 #end
-#set($results = $results.xwql($query).setLimit(50))
-#set($results = $results.execute())
-#set($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
-#set($categories = $categoryField.getListValues())
-#set($categoriesDocs = $util.hashMap)
-#foreach($currentpage in $results)
-  #set($currentdoc = $xwiki.getDocument($currentpage))
-  #set($value = $currentdoc.getValue($category))
-  #if(!$categories.contains($value))
-   #set($discard = $categories.add($value))
-  #end
-  #set($docList = $categoriesDocs.get($value))
-  #if(!$docList)
-   #set($docList = $util.arrayList)
-   #set($discard = $categoriesDocs.put($value, $docList))
-  #end
-  #set($discard = $docList.add($currentdoc.prefixedFullName))
+#if($xcontext.macro.params.removeItemButton)            
+            removeItemButton: ${xcontext.macro.params.removeItemButton},
 #end
-#displayCategories($categories $categoriesDocs)
-{{/velocity}}
-</code>
+            boards: boards
+        });
+      };
+
+      var page = "${doc.fullName}";
+      var counter = ${kanbanCounter};
+      var updateService = "${xwiki.getURL("Macros.KanbanService")}";
+      #if($xcontext.macro.params.updateService)
+       updateService = "${xcontext.macro.params.updateService}";
+      #end
+      #if($xcontext.macro.params.source)
+       var getdata = jQuery.getJSON("${xcontext.macro.params.source}", function(data) {
+         initKanban(data, updateService);
+       });
+       getdata.error(function(xhr,status,error) {
+         console.log("Error retrieving data: " + error);
+       });
+      #elseif($xcontext.macro.content)
+       var boards = ${xcontext.macro.content};
+       initKanban(boards, updateService);
+      #else
+       var boards = [];
+       initKanban(boards, updateService);
+      #end
+ });
+&lt;/script&gt;
+{{/html}}
+{{/velocity}}</code>
     </property>
     <property>
-      <contentDescription/>
+      <contentDescription>Kanban JSON description</contentDescription>
     </property>
     <property>
-      <contentType>No content</contentType>
+      <contentType>Optional</contentType>
     </property>
     <property>
       <defaultCategory/>
     </property>
     <property>
-      <description>Display XWiki Documents from an AWM as a Kanban board (see https://en.wikipedia.org/wiki/Kanban_board).</description>
+      <description>Kanban macro allowing to display and edit a kanban</description>
     </property>
     <property>
       <id>kanban</id>
     </property>
     <property>
-      <name>Kanban board</name>
+      <name>Kanban</name>
     </property>
     <property>
-      <supportsInlineMode>0</supportsInlineMode>
+      <supportsInlineMode/>
     </property>
     <property>
-      <visibility>Global</visibility>
+      <visibility>Current Wiki</visibility>
+    </property>
+  </object>
+  <object>
+    <name>Macros.KanbanMacro</name>
+    <number>0</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>bc9418a8-71bd-449e-b777-5fab2b2bf75e</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <property>
+      <defaultValue>30%</defaultValue>
+    </property>
+    <property>
+      <description>Width of board on the Kanban (default 33%)</description>
+    </property>
+    <property>
+      <mandatory/>
+    </property>
+    <property>
+      <name>width</name>
+    </property>
+  </object>
+  <object>
+    <name>Macros.KanbanMacro</name>
+    <number>1</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>1566c6ac-8546-482e-ada5-ec559ee155f7</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <property>
+      <defaultValue/>
+    </property>
+    <property>
+      <description>JSON Source URL</description>
+    </property>
+    <property>
+      <mandatory>0</mandatory>
+    </property>
+    <property>
+      <name>source</name>
     </property>
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>2</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>93406a70-5b79-475c-9402-1946f3eb046a</guid>
+    <guid>8573f424-eee2-4d66-8c41-529149dfe7d6</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -632,20 +2597,20 @@ Examples:
       <defaultValue/>
     </property>
     <property>
-      <description>AWM Application to display the kanban for</description>
+      <description>Update Service to call</description>
     </property>
     <property>
       <mandatory>0</mandatory>
     </property>
     <property>
-      <name>app</name>
+      <name>updateService</name>
     </property>
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>3</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>92cb31f4-bbfe-48a8-8465-61a4c2b27824</guid>
+    <guid>01746010-0d04-4e6c-bcf8-3cb913af13bc</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -695,23 +2660,23 @@ Examples:
       </name>
     </class>
     <property>
-      <defaultValue/>
+      <defaultValue>true</defaultValue>
     </property>
     <property>
-      <description>XWiki Classname to query (alternatively to the application name)</description>
+      <description>Include the addBoard button</description>
     </property>
     <property>
       <mandatory>0</mandatory>
     </property>
     <property>
-      <name>className</name>
+      <name>addBoardButton</name>
     </property>
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>4</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>2354c7fc-8adf-4b39-b3a2-b320dd4ce8ac</guid>
+    <guid>15797136-ad63-4c28-b6d9-93c97e88fab8</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -761,23 +2726,23 @@ Examples:
       </name>
     </class>
     <property>
-      <defaultValue/>
+      <defaultValue>true</defaultValue>
     </property>
     <property>
-      <description>Field on which to make the kanban columns</description>
+      <description>Include the removeBoard Button</description>
     </property>
     <property>
       <mandatory>0</mandatory>
     </property>
     <property>
-      <name>category</name>
+      <name>removeBoardButton</name>
     </property>
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>5</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>ee44b898-2fec-48bd-9829-bbfd6f1ed29b</guid>
+    <guid>3a9b0431-5686-41d9-8a58-f4f1aefbca78</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -827,23 +2792,23 @@ Examples:
       </name>
     </class>
     <property>
-      <defaultValue/>
+      <defaultValue>true</defaultValue>
     </property>
     <property>
-      <description>Additional xwql to add to the query</description>
+      <description>Include the add Item button</description>
     </property>
     <property>
       <mandatory>0</mandatory>
     </property>
     <property>
-      <name>xwql</name>
+      <name>addItemButton</name>
     </property>
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
     <number>6</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>3fcf34f0-cee9-4a7e-a38f-49b21111228a</guid>
+    <guid>24040cd4-9bdd-4791-b142-cf5a1eed79c4</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -893,214 +2858,16 @@ Examples:
       </name>
     </class>
     <property>
-      <defaultValue/>
+      <defaultValue>true</defaultValue>
     </property>
     <property>
-      <description>Order to sort the data by</description>
-    </property>
-    <property>
-      <mandatory/>
-    </property>
-    <property>
-      <name>order</name>
-    </property>
-  </object>
-  <object>
-    <name>Macros.KanbanMacro</name>
-    <number>8</number>
-    <className>XWiki.WikiMacroParameterClass</className>
-    <guid>bc5df15a-23b2-46ca-b6b4-8450cc731188</guid>
-    <class>
-      <name>XWiki.WikiMacroParameterClass</name>
-      <customClass/>
-      <customMapping/>
-      <defaultViewSheet/>
-      <defaultEditSheet/>
-      <defaultWeb/>
-      <nameField/>
-      <validationScript/>
-      <defaultValue>
-        <disabled>0</disabled>
-        <name>defaultValue</name>
-        <number>4</number>
-        <prettyName>Parameter default value</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </defaultValue>
-      <description>
-        <disabled>0</disabled>
-        <name>description</name>
-        <number>2</number>
-        <prettyName>Parameter description</prettyName>
-        <rows>5</rows>
-        <size>40</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
-      </description>
-      <mandatory>
-        <disabled>0</disabled>
-        <displayFormType>select</displayFormType>
-        <displayType>yesno</displayType>
-        <name>mandatory</name>
-        <number>3</number>
-        <prettyName>Parameter mandatory</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </mandatory>
-      <name>
-        <disabled>0</disabled>
-        <name>name</name>
-        <number>1</number>
-        <prettyName>Parameter name</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </name>
-    </class>
-    <property>
-      <defaultValue/>
-    </property>
-    <property>
-      <description>Title field to use to display the card</description>
-    </property>
-    <property>
-      <mandatory/>
-    </property>
-    <property>
-      <name>title</name>
-    </property>
-  </object>
-  <object>
-    <name>Macros.KanbanMacro</name>
-    <number>9</number>
-    <className>XWiki.WikiMacroParameterClass</className>
-    <guid>69f4c04e-3295-47c9-8142-ef06341d9150</guid>
-    <class>
-      <name>XWiki.WikiMacroParameterClass</name>
-      <customClass/>
-      <customMapping/>
-      <defaultViewSheet/>
-      <defaultEditSheet/>
-      <defaultWeb/>
-      <nameField/>
-      <validationScript/>
-      <defaultValue>
-        <disabled>0</disabled>
-        <name>defaultValue</name>
-        <number>4</number>
-        <prettyName>Parameter default value</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </defaultValue>
-      <description>
-        <disabled>0</disabled>
-        <name>description</name>
-        <number>2</number>
-        <prettyName>Parameter description</prettyName>
-        <rows>5</rows>
-        <size>40</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
-      </description>
-      <mandatory>
-        <disabled>0</disabled>
-        <displayFormType>select</displayFormType>
-        <displayType>yesno</displayType>
-        <name>mandatory</name>
-        <number>3</number>
-        <prettyName>Parameter mandatory</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </mandatory>
-      <name>
-        <disabled>0</disabled>
-        <name>name</name>
-        <number>1</number>
-        <prettyName>Parameter name</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </name>
-    </class>
-    <property>
-      <defaultValue/>
-    </property>
-    <property>
-      <description>Columns to use to display additional data</description>
-    </property>
-    <property>
-      <mandatory/>
-    </property>
-    <property>
-      <name>columns</name>
-    </property>
-  </object>
-  <object>
-    <name>Macros.KanbanMacro</name>
-    <number>10</number>
-    <className>XWiki.WikiMacroParameterClass</className>
-    <guid>0bc4145f-d50a-4178-b8f9-9cfd1cee3e59</guid>
-    <class>
-      <name>XWiki.WikiMacroParameterClass</name>
-      <customClass/>
-      <customMapping/>
-      <defaultViewSheet/>
-      <defaultEditSheet/>
-      <defaultWeb/>
-      <nameField/>
-      <validationScript/>
-      <defaultValue>
-        <disabled>0</disabled>
-        <name>defaultValue</name>
-        <number>4</number>
-        <prettyName>Parameter default value</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </defaultValue>
-      <description>
-        <disabled>0</disabled>
-        <name>description</name>
-        <number>2</number>
-        <prettyName>Parameter description</prettyName>
-        <rows>5</rows>
-        <size>40</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
-      </description>
-      <mandatory>
-        <disabled>0</disabled>
-        <displayFormType>select</displayFormType>
-        <displayType>yesno</displayType>
-        <name>mandatory</name>
-        <number>3</number>
-        <prettyName>Parameter mandatory</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </mandatory>
-      <name>
-        <disabled>0</disabled>
-        <name>name</name>
-        <number>1</number>
-        <prettyName>Parameter name</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </name>
-    </class>
-    <property>
-      <defaultValue>col-xs-12 col-md-4</defaultValue>
-    </property>
-    <property>
-      <description>CSS Classes to use for the columns (default col-xs-12 col-md-4)</description>
+      <description>Include remove Item by drag and drop</description>
     </property>
     <property>
       <mandatory>0</mandatory>
     </property>
     <property>
-      <name>cssClasses</name>
+      <name>addRemoveButton</name>
     </property>
   </object>
 </xwikidoc>
