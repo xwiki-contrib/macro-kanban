@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
--->
-
 <xwikidoc version="1.3" reference="Macros.KanbanMacro" locale="">
   <web>Macros</web>
   <name>KanbanMacro</name>
@@ -65,7 +45,7 @@ Additional parameters:
 == Example ==
 
 {{kanban}}
-[{"id":"todo","title":"To Do","color":"red","item":[{"title":"Item 2"}]},{"id":"working","title":"Working","color":"red","item":[{"title":"Item 4"},{"title":"Item 4"},{"title":"Item 6"}]},{"id":"done","title":"Done","color":"green","item":[{"title":"Item 5b"},{"title":"Item 5"},{"title":"Item 1"}]}]
+[{"id":"working","title":"Working","color":"red","item":[{"title":"Item 5b"},{"title":"Item 1"}]},{"id":"done","title":"Done","color":"green","item":[{"title":"Item 6"},{"title":"Item 5"}]},{"id":"todo","title":"To Do","color":"red","item":[{"title":"Item 2"},{"title":"Item 4"},{"title":"Item 4"}]}]
 {{/kanban}}</content>
   <object>
     <name>Macros.KanbanMacro</name>
@@ -2221,11 +2201,21 @@ require(['jquery','jkanban'], function(jQuery) {
                 if (currentBoards!=newBoards) {
                  console.log("Board object has changed " + counter);
                  var posting = jQuery.post( updateService, { page : page, nb : counter, content : newBoards } );
-                 posting.done(function() {
-                    #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
-                    new XWiki.widgets.Notification('$success', 'info', '20');
-                    currentBoards = newBoards;
+                 posting.success(function(data) {
+                    if (data.indexOf("SUCCESS")&gt;=0 &amp;&amp; data.indexOf("SUCCESS")&lt;10) {
+                     #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
+                     new XWiki.widgets.Notification('$success', 'info', '20');
+                     currentBoards = newBoards;
+                    } else {
+                     #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
+                     new XWiki.widgets.Notification('$error', 'error', '20');
+                    }
                  });
+                 posting.error(function(xhr,status,error) {
+                    #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
+                    new XWiki.widgets.Notification('$error', 'error', '20');
+                 });
+
                  // TODO: need to save board back to XWiki
                 }
               }
@@ -2380,7 +2370,7 @@ require(['jquery','jkanban'], function(jQuery) {
 
       var page = "${doc.fullName}";
       var counter = ${kanbanCounter};
-      var updateService = "${xwiki.getURL("Macros.KanbanService")}";
+      var updateService = "${xwiki.getURL("Macros.KanbanService")}?xpage=plain&amp;outputSyntax=plain";
       #if($xcontext.macro.params.updateService)
        updateService = "${xcontext.macro.params.updateService}";
       #end
@@ -2389,7 +2379,8 @@ require(['jquery','jkanban'], function(jQuery) {
          initKanban(data, updateService);
        });
        getdata.error(function(xhr,status,error) {
-         console.log("Error retrieving data: " + error);
+         #set($error = $escapetool.json($services.localization.render("kanban.load.error")))
+         new XWiki.widgets.Notification('$error', 'error', '20');
        });
       #elseif($xcontext.macro.content)
        var boards = ${xcontext.macro.content};
