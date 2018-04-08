@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
--->
-
 <xwikidoc version="1.3" reference="Macros.KanbanMacro" locale="">
   <web>Macros</web>
   <name>KanbanMacro</name>
@@ -45,9 +25,9 @@ The macro can take the JSON of the kanban either from the content of the macro o
 ##{{{
 {{kanban width="30%" source="" updateService="" addBoardButton="true" addItemButton="true" removeBoardButton="true" removeBoardItem="true"}}
 [
- {"id":"todo","title":"To Do","color":"red","item":[{"title":"Item 2"},{"title":"Item 1"}]},
- {"id":"working","title":"Working","color":"blue","item":[{"title":"Hello"},{"title":"Item 4"},{"title":"Item 6"}]},
- {"id":"done","title":"Done","color":"green","item":[{"title":"Item 5b"},{"title":"Item 5"}]}
+ {"id":"board1","title":"To Do","color":"red","item":[{"title":"Item 1"},{"title":"Item 2"}]},
+ {"id":"board2","title":"Working","color":"blue","item":[{"title":"Item 3"},{"title":"Item 4"}]},
+ {"id":"board3","title":"Done","color":"green","item":[{"title":"Item 5"},{"title":"Item 6"}]}
 ]
 {{/kanban}}
 }}}##
@@ -65,7 +45,11 @@ Additional parameters:
 == Example ==
 
 {{kanban}}
-[{"id":"working","title":"Working","color":"red","item":[{"title":"Item 5b"},{"title":"Item 1"}]},{"id":"done","title":"Done","color":"green","item":[{"title":"Item 6"},{"title":"Item 5"}]},{"id":"todo","title":"To Do","color":"red","item":[{"title":"Item 2"},{"title":"Item 4"},{"title":"Item 4"}]}]
+[
+ {"id":"board1","title":"To Do","color":"red","item":[{"title":"Item 1"},{"title":"Item 2"}]},
+ {"id":"board2","title":"Working","color":"blue","item":[{"title":"Item 3"},{"title":"Item 4"}]},
+ {"id":"board3","title":"Done","color":"green","item":[{"title":"Item 5"},{"title":"Item 6"}]}
+]
 {{/kanban}}</content>
   <object>
     <name>Macros.KanbanMacro</name>
@@ -610,24 +594,21 @@ Additional parameters:
 
                 function __addBoard() { 
                   var counter = 1;
-                  found = false;
-                  while (found) {
-                   for (var board in kanban.options.boards) {
-                     if (board.id == "board" + counter) {
-                        counter++;
-                        break;
+                  for (var j = 0; j &lt; self.options.boards.length; j++) {
+                     var board = self.options.boards[j];
+                     if (board.id.indexOf("board")==0) {
+                        var nb = parseInt(board.id.substring(5));
+                        if (nb&gt;=counter)
+                          counter = counter = nb + 1;
                      }
                    }
-                 found = true;
-                 }
-
+ 
                  self.addBoards([{
                     "id": "board" + counter,
                     "title": "New Board",
                     "color": "yellow",
                     "item": [{ "title": "Item 1" }]}]
                  )
-                 self.onChange();
                 }
 
                 function __setBoard() {
@@ -2262,7 +2243,7 @@ require(['jquery','jkanban'], function(jQuery) {
                     var name = jQuery('#kanban_edit').val();
                     jQuery(el).text(name);
                     var board = jQuery(el.parentNode.parentNode.parentNode).attr("data-id");
-                    var pos = kanban.findElementPosition(el);
+                    var pos = kanban.findElementPosition(el.parentNode);
                     console.log(pos);
                     console.log(board);
                     kanban.getBoardJSON(board).item[pos].title = name;
