@@ -39,9 +39,9 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
-  <content>{{velocity}}
+  <content>{{velocity wiki='false'}}
 #set($ok = $response.setContentType("application/json"))
-#set($colors = ["yellow", "green", "blue", "red", "orange"])
+#set($colors = ["yellow", "green", "blue", "orange", "red"])
 #macro(displayCategories $categories $docLists)
 #set($map = [])
 #foreach($categoryValue in $categories)
@@ -49,7 +49,7 @@
      #set($fakeobj = $fakedoc.getObject($className, true))
      #set($discard = $fakedoc.use($fakeobj))
      #set($discard = $fakedoc.set($category, $categoryValue))
-     #set($scategoryValue = $fakedoc.display($category, "view"))
+     #set($scategoryValue = $fakedoc.display($category, "view", $fakeobj).replaceFirst($regextool.quote('{{html clean="false" wiki="false"}}'), '').replaceAll("$regextool.quote('{{/html}}')$", ''))
      #set($items = [])
      #foreach($docname in $docLists.get($categoryValue))
               #set($currentDoc = $xwiki.getDocument($docname))
@@ -67,9 +67,9 @@
               #if($request.columns &amp;&amp; $request.columns!="")
                #set($scontent = "&lt;ul class='card-field-list'&gt;")
                #foreach($col in $request.columns.split(","))
-                #set($value = $currentDoc.display($col))
+                #set($value = $currentDoc.display($col).replaceFirst($regextool.quote('{{html clean="false" wiki="false"}}'), '').replaceAll("$regextool.quote('{{/html}}')$", ''))
                 #set($pname = $currentDoc.displayPrettyName($col))
-                #set($scontent = "${scontent}&lt;li class='card-field'&gt;&lt;span class='card-field-title''&gt;${escapetool.xml($pname)}&lt;/span&gt;&lt;span class='card-field-value'&gt;${escapetool.xml($value)}&lt;/span&gt;&lt;/li&gt;")
+                #set($scontent = "${scontent}&lt;li class='card-field'&gt;&lt;span class='card-field-title''&gt;${escapetool.xml($pname)}&lt;/span&gt;&lt;span class='card-field-value'&gt;$value&lt;/span&gt;&lt;/li&gt;")
                #end
                #set($scontent = "${scontent}&lt;/ul&gt;")
               #end

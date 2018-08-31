@@ -39,8 +39,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
-  <content>
-This macro allows to display a Kanban board from AppWithinMinutes data using the [[KanbanMacro]] based on one of the fields of the AWM data. It is also possible to drag and drop items in the board and update the field in the XWiki document.
+  <content>This macro allows to display a Kanban board from AppWithinMinutes data using the [[xwiki:Macros.KanbanMacro]] based on one of the fields of the AWM data. It is also possible to drag and drop items in the board and update the field in the XWiki document.
 
 Example:
 
@@ -58,18 +57,170 @@ Examples:
 
 == Kanban of Movies by genre showing the director field ==
 
-{{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1" /}}
+{{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1"/}}
 
 == Kanban of Movies by genre showing the director field only comedy movies ==
 
-{{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1" xwql="obj.boolean1=0" /}}
+{{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1" xwql="obj.boolean1=0"/}}</content>
+  <object>
+    <name>Macros.AWMKanbanMacro</name>
+    <number>0</number>
+    <className>XWiki.StyleSheetExtension</className>
+    <guid>1c695bf4-c6f7-4d25-9288-6c0e6ea456f0</guid>
+    <class>
+      <name>XWiki.StyleSheetExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>5</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <contenttype>PureText</contenttype>
+        <disabled>0</disabled>
+        <editor>PureText</editor>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <contentType>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>contentType</name>
+        <number>6</number>
+        <prettyName>Content Type</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>CSS|LESS</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </contentType>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <property>
+      <cache>default</cache>
+    </property>
+    <property>
+      <code>/*
+ * Reduce a little the paddings, to make some more room on the page.
+*/
+div.kanban-item {
+  padding: @grid-gutter-width / 3;
+}
 
-</content>
+div.kanban-board .kanban-drag {
+  padding: @grid-gutter-width / 3;
+}
+
+div.kanban-board {
+  margin-left: 0.5% !important;
+  margin-right: 0.5% !important;
+}
+
+/*
+ * Arrange the cards for the items
+ */
+/* 1. remove padding for the items list */
+ul.card-field-list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+/* 2. no bold on the item titles, smaller fonts, no margin on the entry title and bold title */
+.kanban-item {
+  .kanban-item-content {
+    font-size: 0.85em;
+    opacity: 0.75;
+    .card-field-title {
+      font-weight: normal;
+    }
+  }
+
+  .kanban-item-title {
+    font-weight: bold;
+    margin: 0 0 10px 0;
+  }
+}
+</code>
+    </property>
+    <property>
+      <contentType>LESS</contentType>
+    </property>
+    <property>
+      <name>Specific style for AWM cards</name>
+    </property>
+    <property>
+      <parse/>
+    </property>
+    <property>
+      <use>onDemand</use>
+    </property>
+  </object>
   <object>
     <name>Macros.AWMKanbanMacro</name>
     <number>1</number>
     <className>XWiki.WikiMacroClass</className>
-    <guid>adf6a651-c9b3-4b1c-ada1-f21f7ee746b6</guid>
+    <guid>b6f7202e-bb0d-47f0-87de-1fafec0b6bb2</guid>
     <class>
       <name>XWiki.WikiMacroClass</name>
       <customClass/>
@@ -186,6 +337,7 @@ Examples:
     </class>
     <property>
       <code>{{velocity}}
+#set($discard = $xwiki.ssx.use('Macros.AWMKanbanMacro'))
 #if($xcontext.macro.params.app)
  #set($app = $xcontext.macro.params.app)
 #else
@@ -212,9 +364,10 @@ Examples:
 #else
  #set($xwql = "")
 #end
+#set($width = "$xcontext.macro.params.width")
 #set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}"))
 #set($awmupdatepath = "/objects/${className}/0/properties/${category}/")   
-{{kanban source="${source}" updateService="" addBoardButton="false" addItemButton="false" removeBoardButton="false" removeItemButton="false" awmupdatepath="${awmupdatepath}"/}}
+{{kanban source="${source}" updateService="" addBoardButton="false" addItemButton="false" removeBoardButton="false" removeItemButton="false" awmupdatepath="${awmupdatepath}" width="${width}" /}}
 {{/velocity}}
 </code>
     </property>
@@ -247,7 +400,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>2</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>42e86573-93a7-4f21-91f3-52ca0a91f0bd</guid>
+    <guid>52ba8cc6-c26d-409e-a57b-7f9d58fb2d33</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -313,7 +466,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>3</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>23abeacb-3f72-4f03-a4f4-3ea04cc8f61e</guid>
+    <guid>c0b74df0-ab85-414b-86f0-973d38637a7c</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -379,7 +532,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>4</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>3720a3ad-88f8-4e17-9694-d8bcba7d08b7</guid>
+    <guid>1e1069ed-35f7-4390-bdbe-5861f3e06a1a</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -445,7 +598,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>5</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>a813056e-19c2-4d30-acc6-e73446c81740</guid>
+    <guid>c5dcadf9-e44f-43ee-bb4e-e93f2c79e921</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -511,7 +664,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>6</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>2408daf8-4ce8-4f29-9a73-67d4120e790a</guid>
+    <guid>90e7a348-7fd6-4532-8f0a-95fe6f0c5e2a</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -577,7 +730,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>8</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>ad8513dd-d4a9-43aa-bf49-0c0b9a6977c3</guid>
+    <guid>3c31e2f0-c001-405e-96f0-2517d62c0cc1</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -643,7 +796,7 @@ Examples:
     <name>Macros.AWMKanbanMacro</name>
     <number>9</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>f741416a-de3c-4ffa-904b-18551471bb64</guid>
+    <guid>af4749c2-7c30-4f8b-94a3-7d111819139c</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -703,6 +856,72 @@ Examples:
     </property>
     <property>
       <name>columns</name>
+    </property>
+  </object>
+  <object>
+    <name>Macros.AWMKanbanMacro</name>
+    <number>10</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>f39a7701-a235-4d45-93a8-15bc55a465ca</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <property>
+      <defaultValue>30%</defaultValue>
+    </property>
+    <property>
+      <description>Width of the columns of the kanban board</description>
+    </property>
+    <property>
+      <mandatory>0</mandatory>
+    </property>
+    <property>
+      <name>width</name>
     </property>
   </object>
 </xwikidoc>

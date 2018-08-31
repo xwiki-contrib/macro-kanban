@@ -40,7 +40,7 @@
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
   <content>The Kanban macro allows to display a Kanban using a modified version of the [[jkanban javascript library&gt;&gt;https://github.com/riktar/jkanban]].
-The macro can take the JSON of the kanban either from the content of the macro or from an URL. There is also the [[AWMKanbanMacro]] allowing to display a kanban board from AppWithinMinutes data.
+The macro can take the JSON of the kanban either from the content of the macro or from an URL. There is also the [[xwiki:Macros.AWMKanbanMacro]] allowing to display a kanban board from AppWithinMinutes data.
 
 ##{{{
 {{kanban width="30%" source="" updateService="" addBoardButton="true" addItemButton="true" removeBoardButton="true" removeBoardItem="true"}}
@@ -75,7 +75,7 @@ Additional parameters:
     <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.JavaScriptExtension</className>
-    <guid>b3b9c112-ba2a-4bf3-933e-79217a55a008</guid>
+    <guid>6c54fae9-0291-4596-bcf4-696b2ec69133</guid>
     <class>
       <name>XWiki.JavaScriptExtension</name>
       <customClass/>
@@ -489,8 +489,8 @@ Additional parameters:
                             nodeItemTitle.clickfn = itemKanban.click; 
                             if (itemKanban.url) {
                               nodeItemTitle.addEventListener('click', function (e) {
-                                 location = itemKanban.url;
-                              });
+                                 location = this.url;
+                              }.bindAsEventListener(itemKanban));
                             } else {
                               // add click handler of item
                               __onclickHandler(nodeItemTitle);
@@ -1774,7 +1774,7 @@ Additional parameters:
     <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.StyleSheetExtension</className>
-    <guid>bf975226-a99e-4aa6-a674-5cce924a8530</guid>
+    <guid>f2a8c2a9-72ce-4a8f-8297-068370bc6036</guid>
     <class>
       <name>XWiki.StyleSheetExtension</name>
       <customClass/>
@@ -1872,12 +1872,11 @@ Additional parameters:
     position: relative;
     box-sizing: border-box;
     width: 100%;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 .kanban-container {
     width: 100%;
-    padding: 15px;
 }
 
 .kanban-container * {
@@ -2072,7 +2071,7 @@ Additional parameters:
     <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.WikiMacroClass</className>
-    <guid>e475843e-5c13-4704-a9f8-d127d90df1e4</guid>
+    <guid>e9397d66-bbe3-4741-9ace-0b27e065d888</guid>
     <class>
       <name>XWiki.WikiMacroClass</name>
       <customClass/>
@@ -2444,7 +2443,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>bc9418a8-71bd-449e-b777-5fab2b2bf75e</guid>
+    <guid>b09d4af7-504d-4822-ab60-eea720f0f992</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -2510,7 +2509,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>1</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>1566c6ac-8546-482e-ada5-ec559ee155f7</guid>
+    <guid>48b0be9b-6077-4ce1-bbae-4e150f8369f9</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -2576,7 +2575,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>2</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>8573f424-eee2-4d66-8c41-529149dfe7d6</guid>
+    <guid>a19c7339-8b95-45a3-80a2-3b6133d78780</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -2642,7 +2641,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>3</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>01746010-0d04-4e6c-bcf8-3cb913af13bc</guid>
+    <guid>d255c397-5b88-43a0-970a-9581da0ce0bb</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -2708,7 +2707,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>4</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>15797136-ad63-4c28-b6d9-93c97e88fab8</guid>
+    <guid>02846aa6-4f3f-4d71-83eb-fe40e80e05c7</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -2774,7 +2773,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>5</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>3a9b0431-5686-41d9-8a58-f4f1aefbca78</guid>
+    <guid>9b5c1ab3-6eda-4fc7-a9f6-e1aba659c1de</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -2840,7 +2839,7 @@ require(['jquery','jkanban'], function(jQuery) {
     <name>Macros.KanbanMacro</name>
     <number>6</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>24040cd4-9bdd-4791-b142-cf5a1eed79c4</guid>
+    <guid>993475f4-5f8d-4365-9d41-176efb51de02</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
