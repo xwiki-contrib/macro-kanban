@@ -220,7 +220,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>1</number>
     <className>XWiki.WikiMacroClass</className>
-    <guid>b6f7202e-bb0d-47f0-87de-1fafec0b6bb2</guid>
+    <guid>adf6a651-c9b3-4b1c-ada1-f21f7ee746b6</guid>
     <class>
       <name>XWiki.WikiMacroClass</name>
       <customClass/>
@@ -339,30 +339,31 @@ ul.card-field-list {
       <code>{{velocity}}
 #set($discard = $xwiki.ssx.use('Macros.AWMKanbanMacro'))
 #if($xcontext.macro.params.app)
- #set($app = $xcontext.macro.params.app)
+  #set($app = $xcontext.macro.params.app)
 #else
- #set($app = "")
+  #set($app = "")
 #end
 #set($className = $xcontext.macro.params.className)
 #if(!$className || $className=="")
- #set($appDoc = $xwiki.getDocument("${app}.WebHome"))
- #set($className = $appDoc.getValue("class"))
+  #set($appDoc = $xwiki.getDocument("${app}.WebHome"))
+  #set($className = $appDoc.getValue("class"))
 #end
 #if($xcontext.macro.params.category)
- #set($category = $xcontext.macro.params.category)
+  #set($category = $xcontext.macro.params.category)
 #else
- #set($category = "status")
+  #set($category = "status")
 #end
 #if($xcontext.macro.params.title)
- #set($title = $xcontext.macro.params.title)
+  #set($title = $xcontext.macro.params.title)
 #else
- #set($title = "")
+  #set($title = "")
 #end
 #set($columns = $xcontext.macro.params.columns)
 #if($$xcontext.macro.params.xwql)
- #set($xwql = $xcontext.macro.params.xwql)
-#else
- #set($xwql = "")
+  #set($xwql = $xcontext.macro.params.xwql)
+#elseif (!$xwql)
+  ## We don't override the xwql variable in case it was defined externally by another macro calling this one (e.g. TaskManager.KanbanBoardMacro).
+  #set($xwql = "")
 #end
 #set($width = "$xcontext.macro.params.width")
 #set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}"))
@@ -400,7 +401,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>2</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>52ba8cc6-c26d-409e-a57b-7f9d58fb2d33</guid>
+    <guid>42e86573-93a7-4f21-91f3-52ca0a91f0bd</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -466,7 +467,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>3</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>c0b74df0-ab85-414b-86f0-973d38637a7c</guid>
+    <guid>23abeacb-3f72-4f03-a4f4-3ea04cc8f61e</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -532,7 +533,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>4</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>1e1069ed-35f7-4390-bdbe-5861f3e06a1a</guid>
+    <guid>3720a3ad-88f8-4e17-9694-d8bcba7d08b7</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -598,7 +599,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>5</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>c5dcadf9-e44f-43ee-bb4e-e93f2c79e921</guid>
+    <guid>a813056e-19c2-4d30-acc6-e73446c81740</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -664,7 +665,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>6</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>90e7a348-7fd6-4532-8f0a-95fe6f0c5e2a</guid>
+    <guid>2408daf8-4ce8-4f29-9a73-67d4120e790a</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -730,7 +731,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>8</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>3c31e2f0-c001-405e-96f0-2517d62c0cc1</guid>
+    <guid>ad8513dd-d4a9-43aa-bf49-0c0b9a6977c3</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
@@ -796,7 +797,7 @@ ul.card-field-list {
     <name>Macros.AWMKanbanMacro</name>
     <number>9</number>
     <className>XWiki.WikiMacroParameterClass</className>
-    <guid>af4749c2-7c30-4f8b-94a3-7d111819139c</guid>
+    <guid>f741416a-de3c-4ffa-904b-18551471bb64</guid>
     <class>
       <name>XWiki.WikiMacroParameterClass</name>
       <customClass/>
