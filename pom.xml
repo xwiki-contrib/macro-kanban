@@ -73,4 +73,7 @@
       <url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
+   <properties>
+    <xwiki.release.jira.skip>true</xwiki.release.jira.skip>
+  </properties>
 </project>
