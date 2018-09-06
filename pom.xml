@@ -29,7 +29,6 @@
     <artifactId>parent-platform</artifactId>
     <version>8.4-10</version>
   </parent>
-  <groupId>org.xwiki.contrib</groupId>
   <artifactId>macro-kanban</artifactId>
   <version>1.2.2-SNAPSHOT</version>
   <packaging>xar</packaging>
