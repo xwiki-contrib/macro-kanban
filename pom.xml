@@ -26,8 +26,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.xwiki.contrib</groupId>
-    <artifactId>parent-commons</artifactId>
-    <version>8.4.6</version>
+    <artifactId>parent-platform</artifactId>
+    <version>8.4-10</version>
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>macro-kanban</artifactId>
@@ -53,29 +53,4 @@
     <url>https://github.com/xwiki-contrib/macro-kanban</url>
     <tag>HEAD</tag>
   </scm>
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.xwiki.commons</groupId>
-        <artifactId>xwiki-commons-tool-xar-handlers</artifactId>
-        <version>${commons.version}</version>
-      </extension>
-    </extensions>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.xwiki.commons</groupId>
-          <artifactId>xwiki-commons-tool-xar-plugin</artifactId>
-          <version>${commons.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  <distributionManagement>
-    <repository>
-      <id>xwiki-staging</id>
-      <name>XWiki Staging Repository</name>
-      <url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
 </project>
