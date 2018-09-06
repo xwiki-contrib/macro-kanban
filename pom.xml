@@ -53,4 +53,8 @@
     <url>https://github.com/xwiki-contrib/macro-kanban</url>
     <tag>HEAD</tag>
   </scm>
+  <properties>
+    <xwiki.extension.name>Kanban macro</xwiki.extension.name>
+    <xwiki.extension.category>macro</xwiki.extension.category>
+  </properties>
 </project>
