@@ -2223,16 +2223,16 @@ require(['jquery','jkanban'], function(jQuery) {
                  var posting = jQuery.post( updateService, { page : page, nb : counter, content : newBoards } );
                  posting.success(function(data) {
                     if (data.indexOf("SUCCESS")&gt;=0 &amp;&amp; data.indexOf("SUCCESS")&lt;10) {
-                     #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
+                     #set($success = $escapetool.javascript($services.localization.render("kanban.update.success")))
                      new XWiki.widgets.Notification('$success', 'info', '20');
                      currentBoards = newBoards;
                     } else {
-                     #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
+                     #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
                      new XWiki.widgets.Notification('$error', 'error', '20');
                     }
                  });
                  posting.error(function(xhr,status,error) {
-                    #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
+                    #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
                     new XWiki.widgets.Notification('$error', 'error', '20');
                  });
 
@@ -2362,11 +2362,11 @@ require(['jquery','jkanban'], function(jQuery) {
               + boardId + '&lt;/value&gt;&lt;/property&gt;'
                 jQuery.ajax({ url: restURL, type: 'PUT', data: data, contentType: "application/xml",
                               success: function(result) {
-                                #set($success = $escapetool.json($services.localization.render("kanban.update.success")))
+                                #set($success = $escapetool.javascript($services.localization.render("kanban.update.success")))
                                 new XWiki.widgets.Notification('$success', 'info', '20');
                               },
                               error: function(result) {
-                                #set($error = $escapetool.json($services.localization.render("kanban.update.error")))
+                                #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
                                 new XWiki.widgets.Notification('$error', 'error', '20');
                               }
                  });
@@ -2399,7 +2399,7 @@ require(['jquery','jkanban'], function(jQuery) {
          initKanban(data, updateService);
        });
        getdata.error(function(xhr,status,error) {
-         #set($error = $escapetool.json($services.localization.render("kanban.load.error")))
+         #set($error = $escapetool.javascript($services.localization.render("kanban.load.error")))
          new XWiki.widgets.Notification('$error', 'error', '20');
        });
       #elseif($xcontext.macro.content)
