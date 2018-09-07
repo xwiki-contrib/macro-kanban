@@ -70,7 +70,7 @@ kanban.load.error=An error occured while trying to load the Kanban data.
         <separators>|, </separators>
         <size>1</size>
         <unmodifiable>0</unmodifiable>
-        <values>GLOBAL|WIKI|USER|ON_DEMAND</values>
+        <values>ON_DEMAND|WIKI|USER|GLOBAL</values>
         <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
       </scope>
     </class>
