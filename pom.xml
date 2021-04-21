@@ -56,5 +56,10 @@
 
     <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
     <xwiki.issueManagement.jira.id>KANBAN-3</xwiki.issueManagement.jira.id>
+
+    <!-- Components -->
+    <xwiki.extension.components>
+      org.xwiki.rendering.macro.Macro/kanban
+    </xwiki.extension.components>
   </properties>
 </project>
