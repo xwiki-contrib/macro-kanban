@@ -55,7 +55,7 @@
     <xwiki.extension.category>macro</xwiki.extension.category>
 
     <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
-    <xwiki.issueManagement.jira.id>KANBAN-3</xwiki.issueManagement.jira.id>
+    <xwiki.issueManagement.jira.id>KANBAN</xwiki.issueManagement.jira.id>
 
     <!-- Components -->
     <xwiki.extension.components>
