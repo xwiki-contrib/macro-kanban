@@ -60,7 +60,7 @@ Additional parameters:
 * ##addBoardButton## display the add Board button (default true)
 * ##addItemButton## display the add Item button (default true)
 * ##removeBoardButton## display the remove Board button (default true)
-* ##removeBoardItem## allow removing Item by drag and dropping them out of a board (default true)
+* ##addRemoveButton## allow removing Item by drag and dropping them out of a board (default true)
 
 == Example ==
 
