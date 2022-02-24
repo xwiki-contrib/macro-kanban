@@ -43,7 +43,7 @@
 The macro can take the JSON of the kanban either from the content of the macro or from an URL. There is also the [[xwiki:Macros.AWMKanbanMacro]] allowing to display a kanban board from AppWithinMinutes data.
 
 ##{{{
-{{kanban width="30%" source="" updateService="" addBoardButton="true" addItemButton="true" removeBoardButton="true" removeBoardItem="true"}}
+{{kanban width="30%" source="" updateService="" addBoardButton="true" addItemButton="true" removeBoardButton="true" addRemoveButton="true"}}
 [
  {"id":"board1","title":"To Do","color":"red","item":[{"title":"Item 1"},{"title":"Item 2"}]},
  {"id":"board2","title":"Working","color":"blue","item":[{"title":"Item 3"},{"title":"Item 4"}]},
@@ -2381,8 +2381,8 @@ require(['jquery','jkanban'], function(jQuery) {
 #if($xcontext.macro.params.removeBoardButton)            
             removeBoardButton: ${xcontext.macro.params.removeBoardButton},
 #end
-#if($xcontext.macro.params.removeItemButton)            
-            removeItemButton: ${xcontext.macro.params.removeItemButton},
+#if($xcontext.macro.params.addRemoveButton)            
+            addRemoveButton: ${xcontext.macro.params.addRemoveButton},
 #end
             boards: boards
         });
