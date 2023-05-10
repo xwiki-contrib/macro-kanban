@@ -2366,8 +2366,33 @@ require(['jquery','jkanban'], function(jQuery) {
                                 new XWiki.widgets.Notification('$success', 'info', '20');
                               },
                               error: function(result) {
-                                #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
-                                new XWiki.widgets.Notification('$error', 'error', '20');
+                                // This is a workaround for XWIKI-20704. Remove this section of code when the parent
+                                // of this project will greater or equal than the fix version of the issue.
+                                // --- START ---
+                                let regex = /\/objects\/([^\/]+)\/0\/properties\/([^\/]+)/;
+                                let match = restURL.match(regex);
+                                let params = {
+                                  outputSyntax: 'plain',
+                                  docRef: currentdoc.documentReference.toString(),
+                                  className: match[1],
+                                  propertyName: match[2]
+                                };
+                                jQuery.ajax({
+                                  url: new XWiki.Document(XWiki.Model.resolve('Macros.KanbanWorkaroundService', XWiki.EntityType.DOCUMENT, XWiki.currentDocument.getDocumentReference())).getURL('get', jQuery.param(params)),
+                                  type: 'GET',
+                                  success: function(result) {
+                                    if (result.status === boardId) {
+                                      new XWiki.widgets.Notification('$success', 'info', '20');
+                                    } else {
+                                      #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
+                                      new XWiki.widgets.Notification('$error', 'error', '20');
+                                    }
+                                  },
+                                  error: function() {
+                                    new XWiki.widgets.Notification('$error', 'error', '20');
+                                  }
+                                });
+                                // --- END ---
                               }
                  });
             },
