@@ -28,7 +28,7 @@
     <version>8.4-11</version>
   </parent>
   <artifactId>macro-kanban</artifactId>
-  <version>1.2.6-SNAPSHOT</version>
+  <version>1.2.6</version>
   <packaging>xar</packaging>
   <name>Kanban Macro</name>
   <description>Displays a Kanban view of AppWithinMinutes data.</description>
@@ -48,7 +48,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/macro-kanban.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/macro-kanban.git</developerConnection>
     <url>https://github.com/xwiki-contrib/macro-kanban</url>
-    <tag>HEAD</tag>
+    <tag>macro-kanban-1.2.6</tag>
   </scm>
   <properties>
     <xwiki.extension.name>Kanban macro</xwiki.extension.name>
