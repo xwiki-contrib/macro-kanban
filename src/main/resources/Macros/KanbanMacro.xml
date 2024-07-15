@@ -207,11 +207,11 @@ Additional parameters:
                     widthBoard: '250px',
                     responsive: '700',
                     colors: {
-                        'yellow': '#8C4',
-                        'blue':'#0AC',
-                        'green': '#0AC',
-                        'yellow':'#FC3',
-                        'red':'#E43'
+                      'green': '#8C4',
+                      'blue':'#0AC',
+                      'orange':'#F91'
+                      'yellow':'#FC3',
+                      'red':'#E43'
                     },
                     boards: [],
                     dragBoards: true,

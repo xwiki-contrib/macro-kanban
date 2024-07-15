@@ -365,10 +365,9 @@ ul.card-field-list {
   ## We don't override the xwql variable in case it was defined externally by another macro calling this one (e.g. TaskManager.KanbanBoardMacro).
   #set($xwql = "")
 #end
-#if ($$xcontext.macro.params.colors)
+#if ($xcontext.macro.params.colors)
   #set($colors = $xcontext.macro.params.colors)
-#elseif (!$colors)
-  ## We don't override the colors variable in case it was defined externally by another macro calling this one (e.g. TaskManager.KanbanBoardMacro).
+#else
   ## We set as default the original colors: green,blue,orange,yellow,red
   #set($colors = "#8C4,#0AC,#F91,#FC3,#E43")
 #end
