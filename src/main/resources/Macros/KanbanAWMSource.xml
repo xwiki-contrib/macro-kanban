@@ -40,97 +40,99 @@
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
   <content>{{velocity wiki='false'}}
-#set($ok = $response.setContentType("application/json"))
-#set($colors = ["yellow", "green", "blue", "orange", "red"])
-#macro(displayCategories $categories $docLists)
-#set($map = [])
-#foreach($categoryValue in $categories)
-     #set($fakedoc = $xwiki.getDocument("XWiki.FakeDocument"))
-     #set($fakeobj = $fakedoc.getObject($className, true))
-     #set($discard = $fakedoc.use($fakeobj))
-     #set($discard = $fakedoc.set($category, $categoryValue))
-     #set($scategoryValue = $fakedoc.display($category, "view", $fakeobj).replaceFirst($regextool.quote('{{html clean="false" wiki="false"}}'), '').replaceAll("$regextool.quote('{{/html}}')$", ''))
-     #set($items = [])
-     #foreach($docname in $docLists.get($categoryValue))
-              #set($currentDoc = $xwiki.getDocument($docname))
-              #set($surl = $currentDoc.getURL("view"))
-              #if($request.title &amp;&amp; $request.title != "")
-               #if($request.title=="title")
-                #set($title = $currentDoc.title)
-               #else
-                #set($stitle = $currentDoc.display($request.title))
-               #end
-              #else
-               #set($stitle = $currentDoc.getDisplayTitle())
-              #end
-              #set($scontent = "")
-              #if($request.columns &amp;&amp; $request.columns!="")
-               #set($scontent = "&lt;ul class='card-field-list'&gt;")
-               #foreach($col in $request.columns.split(","))
-                #set($value = $currentDoc.display($col).replaceFirst($regextool.quote('{{html clean="false" wiki="false"}}'), '').replaceAll("$regextool.quote('{{/html}}')$", ''))
-                #set($pname = $currentDoc.displayPrettyName($col))
-                #set($scontent = "${scontent}&lt;li class='card-field'&gt;&lt;span class='card-field-title''&gt;${escapetool.xml($pname)}&lt;/span&gt;&lt;span class='card-field-value'&gt;$value&lt;/span&gt;&lt;/li&gt;")
-               #end
-               #set($scontent = "${scontent}&lt;/ul&gt;")
-              #end
-              #set($itemmap = { "id" : $docname, "title" : $stitle, "url": $surl, "content" : $scontent })
-              #set($ok = $items.add($itemmap))
-      #end
-     #set($color = $listtool.get($colors, $velocityCount))
-     #if(!$color)
-      #set($color = "blue")
+#if ($xcontext.action == 'get')
+  #set($ok = $response.setContentType("application/json"))
+  #set($colors = $request.colors.split(','))
+  #macro(displayCategories $categories $docLists)
+  #set($map = [])
+  #foreach($categoryValue in $categories)
+       #set($fakedoc = $xwiki.getDocument("XWiki.FakeDocument"))
+       #set($fakeobj = $fakedoc.getObject($className, true))
+       #set($discard = $fakedoc.use($fakeobj))
+       #set($discard = $fakedoc.set($category, $categoryValue))
+       #set($scategoryValue = $fakedoc.display($category, "view", $fakeobj).replaceFirst($regextool.quote('{{html clean="false" wiki="false"}}'), '').replaceAll("$regextool.quote('{{/html}}')$", ''))
+       #set($items = [])
+       #foreach($docname in $docLists.get($categoryValue))
+                #set($currentDoc = $xwiki.getDocument($docname))
+                #set($surl = $currentDoc.getURL("view"))
+                #if($request.title &amp;&amp; $request.title != "")
+                 #if($request.title=="title")
+                  #set($title = $currentDoc.title)
+                 #else
+                  #set($stitle = $currentDoc.display($request.title))
+                 #end
+                #else
+                 #set($stitle = $currentDoc.getDisplayTitle())
+                #end
+                #set($scontent = "")
+                #if($request.columns &amp;&amp; $request.columns!="")
+                 #set($scontent = "&lt;ul class='card-field-list'&gt;")
+                 #foreach($col in $request.columns.split(","))
+                  #set($value = $currentDoc.display($col).replaceFirst($regextool.quote('{{html clean="false" wiki="false"}}'), '').replaceAll("$regextool.quote('{{/html}}')$", ''))
+                  #set($pname = $currentDoc.displayPrettyName($col))
+                  #set($scontent = "${scontent}&lt;li class='card-field'&gt;&lt;span class='card-field-title''&gt;${escapetool.xml($pname)}&lt;/span&gt;&lt;span class='card-field-value'&gt;$value&lt;/span&gt;&lt;/li&gt;")
+                 #end
+                 #set($scontent = "${scontent}&lt;/ul&gt;")
+                #end
+                #set($itemmap = { "id" : $docname, "title" : $stitle, "url": $surl, "content" : $scontent })
+                #set($ok = $items.add($itemmap))
+        #end
+       #set($color = $listtool.get($colors, $foreach.index).strip())
+       #if(!$color)
+        #set($color = "blue")
+       #end
+       #set($ok = $map.add({ "id" : $categoryValue, "title" : $scategoryValue, "color" : "${color}", "item" : $items }))
      #end
-     #set($ok = $map.add({ "id" : $categoryValue, "title" : $scategoryValue, "color" : "${color}", "item" : $items }))
+  $jsontool.serialize(${map})
+  #end
+  #if($request.className||$request.app)
+  #set($app = $request.app)
+  #set($className = $request.className)
+  #if(!$className || $className=="")
+   #set($appDoc = $xwiki.getDocument("${app}.WebHome"))
+   #set($className = $appDoc.getValue("class"))
+  #end
+  #set($category = $request.category)
+  #set($results = $services.query)
+  #set($query = "from doc.object(${className}) as obj where doc.fullName not like '%Template'")
+  #set($xwql = $request.xwql)
+  #if($xwql &amp;&amp; $xwql!="")
+   #set($query = "${query} and ${xwql}")
+  #end
+  #set($order = $request.order)
+  #if($order &amp;&amp; $order!="")
+   #if($order.startsWith("doc"))
+    #set($query = "${query} order by ${order}")
+   #else
+    #set($query = "${query} order by obj.${order}")
    #end
-$jsontool.serialize(${map})
-#end
-#if($request.className||$request.app)
-#set($app = $request.app)
-#set($className = $request.className)
-#if(!$className || $className=="")
- #set($appDoc = $xwiki.getDocument("${app}.WebHome"))
- #set($className = $appDoc.getValue("class"))
-#end
-#set($category = $request.category)
-#set($results = $services.query)
-#set($query = "from doc.object(${className}) as obj where doc.fullName not like '%Template'")
-#set($xwql = $request.xwql)
-#if($xwql &amp;&amp; $xwql!="")
- #set($query = "${query} and ${xwql}")
-#end
-#set($order = $request.order)
-#if($order &amp;&amp; $order!="")
- #if($order.startsWith("doc"))
-  #set($query = "${query} order by ${order}")
- #else
-  #set($query = "${query} order by obj.${order}")
- #end
-#end
-#if($request.debug)
-/* {{{ $query }}} */
-#end
-#set($results = $results.xwql($query).setLimit(50))
-#set($results = $results.execute())
-#if($request.debug)
-/* {{{ $results }}} */
-#end
-#set($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
-#set($categories = $categoryField.getListValues())
-#set($categoriesDocs = $util.hashMap)
-#foreach($currentpage in $results)
-  #set($currentdoc = $xwiki.getDocument($currentpage))
-  #set($value = $currentdoc.getValue($category))
-  #if(!$categories.contains($value))
-   #set($discard = $categories.add($value))
   #end
-  #set($docList = $categoriesDocs.get($value))
-  #if(!$docList)
-   #set($docList = $util.arrayList)
-   #set($discard = $categoriesDocs.put($value, $docList))
+  #if($request.debug)
+  /* {{{ $query }}} */
   #end
-  #set($discard = $docList.add($currentdoc.prefixedFullName))
-#end
-#displayCategories($categories $categoriesDocs)
+  #set($results = $results.xwql($query).setLimit(50))
+  #set($results = $results.execute())
+  #if($request.debug)
+  /* {{{ $results }}} */
+  #end
+  #set($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
+  #set($categories = $categoryField.getListValues())
+  #set($categoriesDocs = $util.hashMap)
+  #foreach($currentpage in $results)
+    #set($currentdoc = $xwiki.getDocument($currentpage))
+    #set($value = $currentdoc.getValue($category))
+    #if(!$categories.contains($value))
+     #set($discard = $categories.add($value))
+    #end
+    #set($docList = $categoriesDocs.get($value))
+    #if(!$docList)
+     #set($docList = $util.arrayList)
+     #set($discard = $categoriesDocs.put($value, $docList))
+    #end
+    #set($discard = $docList.add($currentdoc.prefixedFullName))
+  #end
+  #displayCategories($categories $categoriesDocs)
+  #end
 #end
 {{/velocity}}</content>
 </xwikidoc>
