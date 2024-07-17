@@ -209,7 +209,7 @@ Additional parameters:
                     colors: {
                       'green': '#8C4',
                       'blue':'#0AC',
-                      'orange':'#F91'
+                      'orange':'#F91',
                       'yellow':'#FC3',
                       'red':'#E43'
                     },
