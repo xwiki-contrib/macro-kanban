@@ -107,6 +107,10 @@
     #set($query = "${query} order by obj.${order}")
    #end
   #end
+  #if($request.categoryValues)
+    ## Only display a subset of all categories
+    #set($categoryValues = $request.categoryValues.split(","))
+  #end
   #if($request.debug)
   /* {{{ $query }}} */
   #end
@@ -115,13 +119,17 @@
   #if($request.debug)
   /* {{{ $results }}} */
   #end
-  #set($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
-  #set($categories = $categoryField.getListValues())
+  #if($categoryValues)
+    #set($categories = $categoryValues)
+  #else
+    #set($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
+    #set($categories = $categoryField.getListValues())
+  #end
   #set($categoriesDocs = $util.hashMap)
   #foreach($currentpage in $results)
     #set($currentdoc = $xwiki.getDocument($currentpage))
     #set($value = $currentdoc.getValue($category))
-    #if(!$categories.contains($value))
+    #if(!$categories.contains($value) &amp;&amp; !$categoryValues)
      #set($discard = $categories.add($value))
     #end
     #set($docList = $categoriesDocs.get($value))

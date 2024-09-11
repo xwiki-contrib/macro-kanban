@@ -49,6 +49,7 @@ Example:
 
 * ##app or className## application or className for which to build the kanban board
 * ##category## field to use to break down the kanban board
+* ##categoryValues## only display these values for the categories (comma separated, optional)
 * ##xwql## additional xwql to restrict the query
 * ##title## field to display the title
 * ##columns## additional columns to display
@@ -58,6 +59,10 @@ Examples:
 == Kanban of Movies by genre showing the director field ==
 
 {{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1"/}}
+
+== Kanban of Movies showing the director field, only showing a subset of directors==
+
+{{awmkanban app="Help.Applications.Movies" category="databaseList1" categoryValues="Help.Applications.Contributors.Charlie Chaplin" columns="staticList1,boolean1"/}}
 
 == Kanban of Movies by genre showing the director field only comedy movies ==
 
@@ -372,8 +377,11 @@ ul.card-field-list {
   #set($colors = "#8C4,#0AC,#F91,#FC3,#E43")
 #end
 
+#if($xcontext.macro.params.categoryValues)
+  #set($categoryValues = "&amp;categoryValues=${escapetool.url($xcontext.macro.params.categoryValues)}")
+#end
 #set($width = "$xcontext.macro.params.width")
-#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}"))
+#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}$!{categoryValues}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}"))
 #set($awmupdatepath = "/objects/${className}/0/properties/${category}/")
 {{kanban source="${source}" updateService="" addBoardButton="false" addItemButton="false" removeBoardButton="false" removeItemButton="false" awmupdatepath="${awmupdatepath}" width="${width}" /}}
 {{/velocity}}
@@ -1008,6 +1016,75 @@ ul.card-field-list {
     </property>
     <property>
       <name>colors</name>
+    </property>
+    <property>
+      <type/>
+    </property>
+  </object>
+  <object>
+    <name>Macros.AWMKanbanMacro</name>
+    <number>12</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>142486fa-b3c6-4286-81a3-f07d98bcc3b8</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <property>
+      <defaultValue/>
+    </property>
+    <property>
+      <description>Only display these values of the category. (Comma separated)</description>
+    </property>
+    <property>
+      <mandatory>0</mandatory>
+    </property>
+    <property>
+      <name>categoryValues</name>
     </property>
     <property>
       <type/>
