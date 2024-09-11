@@ -49,7 +49,7 @@ Example:
 
 * ##app or className## application or className for which to build the kanban board
 * ##category## field to use to break down the kanban board
-* ##categoryValues## only display these values for the categories (comma separated, optional)
+* ##categoryValues## only display these values for the categories
 * ##xwql## additional xwql to restrict the query
 * ##title## field to display the title
 * ##columns## additional columns to display
