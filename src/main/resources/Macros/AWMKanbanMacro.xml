@@ -376,11 +376,7 @@ ul.card-field-list {
   ## We set as default the original colors: green,blue,orange,yellow,red
   #set($colors = "#8C4,#0AC,#F91,#FC3,#E43")
 #end
-#if($xcontext.macro.params.displayCategories)
-  #set($displayCategories = "$xcontext.macro.params.displayCategories")
-#else
-  #set($displayCategories = "")
-#end
+#set ($displayCategories = "$!xcontext.macro.params.displayCategories")
 
 #set($width = "$xcontext.macro.params.width")
 #set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayCategories=${escapetool.url($displayCategories)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}"))
