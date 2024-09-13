@@ -107,9 +107,9 @@
     #set($query = "${query} order by obj.${order}")
    #end
   #end
-  #if($request.categoryValues)
+  #if("$!request.displayCategories" != '')
     ## Only display a subset of all categories
-    #set($categoryValues = $request.categoryValues.split(","))
+    #set($categoryValues = $request.displayCategories.split(","))
   #end
   #if($request.debug)
   /* {{{ $query }}} */
