@@ -109,7 +109,7 @@
   #end
   #if("$!request.displayCategories" != '')
     ## Only display a subset of all categories
-    #set($categoryValues = $request.displayCategories.split(","))
+    #set($categoryValues = $request.displayCategories.split(','))
   #end
   #if($request.debug)
   /* {{{ $query }}} */
