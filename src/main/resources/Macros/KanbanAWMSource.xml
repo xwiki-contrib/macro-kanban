@@ -107,9 +107,9 @@
     #set($query = "${query} order by obj.${order}")
    #end
   #end
-  #if ("$!request.displayCategories" != '')
-    ## Only display a subset of all categories
-    #set ($categoryValues = $request.displayCategories.split(','))
+  #if ("$!request.displayedCategoryColumns" != '')
+    ## Only display a subset of all categories.
+    #set ($selectedCategoryValues = $request.displayedCategoryColumns.split(','))
   #end
   #if($request.debug)
   /* {{{ $query }}} */
@@ -119,17 +119,38 @@
   #if($request.debug)
   /* {{{ $results }}} */
   #end
-  #if ($categoryValues)
-    #set ($categories = $categoryValues)
-  #else
-    #set ($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
-    #set ($categories = $categoryField.getListValues())
+  #set ($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
+  #set ($categories = $categoryField.getListValues())
+
+  #if ($selectedCategoryValues)
+    ## Validate the requested category values.
+    #if ($categories)
+      ## Remove values not in the set of possible values (if there is such a set).
+      #set ($validatedCategoryValues = [])
+      #foreach ($selectedCategoryValue in $selectedCategoryValues)
+        #if ($categories.contains($selectedCategoryValue))
+          #set ($discard = $validatedCategoryValues.add($selectedCategoryValue))
+        #end
+      #end
+      #set ($selectedCategoryValues = $validatedCategoryValues)
+    #end
+
+    ## Remove duplicate values (only leave the first one of each unique value).
+    #set ($validatedCategoryValues = [])
+    #foreach ($selectedCategoryValue in $selectedCategoryValues)
+      #if (!$validatedCategoryValues.contains($selectedCategoryValue))
+        #set ($discard = $validatedCategoryValues.add($selectedCategoryValue))
+      #end
+    #end
+
+    #set ($categories = $validatedCategoryValues)
   #end
+
   #set($categoriesDocs = $util.hashMap)
   #foreach($currentpage in $results)
     #set($currentdoc = $xwiki.getDocument($currentpage))
     #set($value = $currentdoc.getValue($category))
-    #if(!$categories.contains($value) &amp;&amp; !$categoryValues)
+    #if(!$categories.contains($value) &amp;&amp; !$selectedCategoryValues)
      #set($discard = $categories.add($value))
     #end
     #set($docList = $categoriesDocs.get($value))
