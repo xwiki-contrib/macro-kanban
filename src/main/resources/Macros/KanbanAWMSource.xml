@@ -121,31 +121,21 @@
   #end
   #set ($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
   #set ($categories = $categoryField.getListValues())
-
   #if ($selectedCategoryValues)
-    ## Validate the requested category values.
-    #if ($categories)
-      ## Remove values not in the set of possible values (if there is such a set).
-      #set ($validatedCategoryValues = [])
-      #foreach ($selectedCategoryValue in $selectedCategoryValues)
-        #if ($categories.contains($selectedCategoryValue))
-          #set ($discard = $validatedCategoryValues.add($selectedCategoryValue))
-        #end
-      #end
-      #set ($selectedCategoryValues = $validatedCategoryValues)
-    #end
-
+    ## Validate the requested category values:
+    ## Remove values not in the set of possible values (if there is such a set).
     ## Remove duplicate values (only leave the first one of each unique value).
     #set ($validatedCategoryValues = [])
     #foreach ($selectedCategoryValue in $selectedCategoryValues)
-      #if (!$validatedCategoryValues.contains($selectedCategoryValue))
+      #if (
+        $categories.contains($selectedCategoryValue) &amp;&amp;
+        !$validatedCategoryValues.contains($selectedCategoryValue)
+      )
         #set ($discard = $validatedCategoryValues.add($selectedCategoryValue))
       #end
     #end
-
     #set ($categories = $validatedCategoryValues)
   #end
-
   #set($categoriesDocs = $util.hashMap)
   #foreach($currentpage in $results)
     #set($currentdoc = $xwiki.getDocument($currentpage))
