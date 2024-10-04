@@ -109,7 +109,7 @@
   #end
   #if ("$!request.displayedCategoryColumns" != '')
     ## Only display a subset of all categories.
-    #set ($selectedCategoryValues = $request.displayedCategoryColumns.split(','))
+    #set ($selectedCategories = $request.displayedCategoryColumns.split(','))
   #end
   #if($request.debug)
   /* {{{ $query }}} */
@@ -121,26 +121,26 @@
   #end
   #set ($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
   #set ($categories = $categoryField.getListValues())
-  #if ($selectedCategoryValues)
+  #if ($selectedCategories)
     ## Validate the requested category values:
     ## Remove values not in the set of possible values (if there is such a set).
     ## Remove duplicate values (only leave the first one of each unique value).
-    #set ($validatedCategoryValues = [])
-    #foreach ($selectedCategoryValue in $selectedCategoryValues)
+    #set ($validatedCategories = [])
+    #foreach ($selectedCategory in $selectedCategories)
       #if (
-        $categories.contains($selectedCategoryValue) &amp;&amp;
-        !$validatedCategoryValues.contains($selectedCategoryValue)
+        $categories.contains($selectedCategory) &amp;&amp;
+        !$validatedCategories.contains($selectedCategory)
       )
-        #set ($discard = $validatedCategoryValues.add($selectedCategoryValue))
+        #set ($discard = $validatedCategories.add($selectedCategory))
       #end
     #end
-    #set ($categories = $validatedCategoryValues)
+    #set ($categories = $validatedCategories)
   #end
   #set($categoriesDocs = $util.hashMap)
   #foreach($currentpage in $results)
     #set($currentdoc = $xwiki.getDocument($currentpage))
     #set($value = $currentdoc.getValue($category))
-    #if(!$categories.contains($value) &amp;&amp; !$selectedCategoryValues)
+    #if(!$categories.contains($value) &amp;&amp; (!$selectedCategories || $selectedCategories.contains($value)))
      #set($discard = $categories.add($value))
     #end
     #set($docList = $categoriesDocs.get($value))
