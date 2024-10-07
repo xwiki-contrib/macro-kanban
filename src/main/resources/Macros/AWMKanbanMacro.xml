@@ -44,20 +44,25 @@
 Example:
 
 ##{{{
-{{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1" xwql="obj.boolean1=0" /}}
+{{awmkanban app="Help.Applications.Movies" category="databaseList1" displayedCategoryColumns="Help.Applications.Contributors.Charlie Chaplin" columns="staticList1,boolean1" xwql="obj.boolean1=0" /}}
 }}}##
 
-* ##app or className## application or className for which to build the kanban board
-* ##category## field to use to break down the kanban board
-* ##xwql## additional xwql to restrict the query
-* ##title## field to display the title
-* ##columns## additional columns to display
+* ##app or className## - application or className for which to build the kanban board
+* ##category## - class field used to group the kanban board into columns
+* ##displayedCategoryColumns## - only display these values of the `category` field as columns
+* ##xwql## - additional xwql to restrict the query
+* ##title## - field to display the title
+* ##columns## - the class fields to display as a description in each card
 
 Examples:
 
 == Kanban of Movies by genre showing the director field ==
 
 {{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1"/}}
+
+== Kanban of Movies showing the director field, only showing a subset of directors==
+
+{{awmkanban app="Help.Applications.Movies" category="databaseList1" displayedCategoryColumns="Help.Applications.Contributors.Charlie Chaplin" columns="staticList1,boolean1"/}}
 
 == Kanban of Movies by genre showing the director field only comedy movies ==
 
@@ -371,9 +376,10 @@ ul.card-field-list {
   ## We set as default the original colors: green,blue,orange,yellow,red
   #set($colors = "#8C4,#0AC,#F91,#FC3,#E43")
 #end
+#set ($displayedCategoryColumns = "$!xcontext.macro.params.displayedCategoryColumns")
 
 #set($width = "$xcontext.macro.params.width")
-#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}"))
+#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayedCategoryColumns=${escapetool.url($displayedCategoryColumns)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}"))
 #set($awmupdatepath = "/objects/${className}/0/properties/${category}/")
 {{kanban source="${source}" updateService="" addBoardButton="false" addItemButton="false" removeBoardButton="false" removeItemButton="false" awmupdatepath="${awmupdatepath}" width="${width}" /}}
 {{/velocity}}
@@ -857,7 +863,7 @@ ul.card-field-list {
       <defaultValue/>
     </property>
     <property>
-      <description>Columns to use to display additional data</description>
+      <description>The class properties to display in each card description as additional data (comma separated values)</description>
     </property>
     <property>
       <mandatory/>
@@ -1008,6 +1014,75 @@ ul.card-field-list {
     </property>
     <property>
       <name>colors</name>
+    </property>
+    <property>
+      <type/>
+    </property>
+  </object>
+  <object>
+    <name>Macros.AWMKanbanMacro</name>
+    <number>12</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>142486fa-b3c6-4286-81a3-f07d98bcc3b8</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <property>
+      <defaultValue/>
+    </property>
+    <property>
+      <description>Have only these category values as board columns, i.e. for 'ToDo,InProgress' (comma separated values) you will only have 2 kanban columns. Note that these should be values accepted by the specified category property.</description>
+    </property>
+    <property>
+      <mandatory>0</mandatory>
+    </property>
+    <property>
+      <name>displayedCategoryColumns</name>
     </property>
     <property>
       <type/>
