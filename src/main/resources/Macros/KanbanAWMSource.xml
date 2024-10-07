@@ -140,7 +140,7 @@
   #foreach($currentpage in $results)
     #set($currentdoc = $xwiki.getDocument($currentpage))
     #set($value = $currentdoc.getValue($category))
-    #if(!$categories.contains($value) &amp;&amp; $value &amp;&amp; (!$selectedCategories || $selectedCategories.contains($value)))
+    #if($value &amp;&amp; !$categories.contains($value) &amp;&amp; (!$selectedCategories || $selectedCategories.contains($value)))
      #set($discard = $categories.add($value))
     #end
     #set($docList = $categoriesDocs.get($value))
