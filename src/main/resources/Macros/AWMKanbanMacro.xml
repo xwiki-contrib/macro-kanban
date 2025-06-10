@@ -377,9 +377,10 @@ ul.card-field-list {
   #set($colors = "#8C4,#0AC,#F91,#FC3,#E43")
 #end
 #set ($displayedCategoryColumns = "$!xcontext.macro.params.displayedCategoryColumns")
+#set ($limit = "$!xcontext.macro.params.limit")
 
 #set($width = "$xcontext.macro.params.width")
-#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayedCategoryColumns=${escapetool.url($displayedCategoryColumns)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}"))
+#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayedCategoryColumns=${escapetool.url($displayedCategoryColumns)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}&amp;limit=${escapetool.url($limit)}"))
 #set($awmupdatepath = "/objects/${className}/0/properties/${category}/")
 {{kanban source="${source}" updateService="" addBoardButton="false" addItemButton="false" removeBoardButton="false" removeItemButton="false" awmupdatepath="${awmupdatepath}" width="${width}" /}}
 {{/velocity}}
@@ -1083,6 +1084,85 @@ ul.card-field-list {
     </property>
     <property>
       <name>displayedCategoryColumns</name>
+    </property>
+    <property>
+      <type/>
+    </property>
+  </object>
+  <object>
+    <name>Macros.AWMKanbanMacro</name>
+    <number>13</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>18858535-0907-488e-84c2-0733b7a39d6b</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <restricted>0</restricted>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <type>
+        <disabled>0</disabled>
+        <name>type</name>
+        <number>5</number>
+        <prettyName>Parameter type</prettyName>
+        <size>60</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </type>
+    </class>
+    <property>
+      <defaultValue>50</defaultValue>
+    </property>
+    <property>
+      <description>Set the maximum amount of items to show. If the displayedCategoryColumns parameter is set, the limit is applied for each column.</description>
+    </property>
+    <property>
+      <mandatory>0</mandatory>
+    </property>
+    <property>
+      <name>limit</name>
     </property>
     <property>
       <type/>

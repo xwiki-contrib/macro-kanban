@@ -74,7 +74,8 @@
                  #end
                  #set($scontent = "${scontent}&lt;/ul&gt;")
                 #end
-                #set($itemmap = { "id" : $docname, "title" : $stitle, "url": $surl, "content" : $scontent })
+                #set ($docid = "$currentDoc.getDocumentReference()")
+                #set($itemmap = { "id" : $docid, "title" : $stitle, "url": $surl, "content" : $scontent })
                 #set($ok = $items.add($itemmap))
         #end
        #set($color = $listtool.get($colors, $foreach.index).strip())
@@ -93,8 +94,12 @@
    #set($className = $appDoc.getValue("class"))
   #end
   #set($category = $request.category)
-  #set($results = $services.query)
   #set($query = "from doc.object(${className}) as obj where doc.fullName not like '%Template'")
+  #if ("$!request.displayedCategoryColumns" != '')
+    ## Only display a subset of all categories.
+    #set ($query = "${query} and obj.${category}=:categoryValue")
+    #set ($selectedCategories = $request.displayedCategoryColumns.split(','))
+  #end
   #set($xwql = $request.xwql)
   #if($xwql &amp;&amp; $xwql!="")
    #set($query = "${query} and ${xwql}")
@@ -107,17 +112,8 @@
     #set($query = "${query} order by obj.${order}")
    #end
   #end
-  #if ("$!request.displayedCategoryColumns" != '')
-    ## Only display a subset of all categories.
-    #set ($selectedCategories = $request.displayedCategoryColumns.split(','))
-  #end
   #if($request.debug)
   /* {{{ $query }}} */
-  #end
-  #set($results = $results.xwql($query).setLimit(50))
-  #set($results = $results.execute())
-  #if($request.debug)
-  /* {{{ $results }}} */
   #end
   #set ($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
   #set ($categories = $categoryField.getListValues())
@@ -137,18 +133,48 @@
     #set ($categories = $validatedCategories)
   #end
   #set($categoriesDocs = $util.hashMap)
-  #foreach($currentpage in $results)
-    #set($currentdoc = $xwiki.getDocument($currentpage))
-    #set($value = $currentdoc.getValue($category))
-    #if($value &amp;&amp; !$categories.contains($value) &amp;&amp; (!$selectedCategories || $selectedCategories.contains($value)))
-     #set($discard = $categories.add($value))
+  #set ($limit = $request.limit)
+  #if ("$!limit" == '')
+    #set ($limit = 50)
+  #end
+  #if ($selectedCategories)
+    #foreach ($categoryValue in $categories)
+      #set ($results = $services.query.xwql($query).bindValue('categoryValue', $categoryValue).setLimit($limit))
+      #set ($results = $results.execute())
+      #set ($docList = [])
+      ## Filter out pages without view rights.
+      #foreach ($currentpage in $results)
+        #if ($xwiki.getDocument($currentpage))
+          #set ($discard = $docList.add($currentpage))
+        #end
+      #end
+      #if ($request.debug)
+        /* {{{$categoryValue: $docList }}} */
+      #end
+      #set ($discard = $categoriesDocs.put($categoryValue, $docList))
     #end
-    #set($docList = $categoriesDocs.get($value))
-    #if(!$docList)
-     #set($docList = $util.arrayList)
-     #set($discard = $categoriesDocs.put($value, $docList))
+  #else
+    #set ($results = $services.query.xwql($query).setLimit($limit))
+    #set ($results = $results.execute())
+    #if($request.debug)
+    /* {{{ $results }}} */
     #end
-    #set($discard = $docList.add($currentdoc.prefixedFullName))
+    #foreach($currentpage in $results)
+      #set($currentdoc = $xwiki.getDocument($currentpage))
+      #set($value = $currentdoc.getValue($category))
+      #if($value &amp;&amp; !$categories.contains($value))
+       #set($discard = $categories.add($value))
+      #end
+      #set($docList = $categoriesDocs.get($value))
+      #if(!$docList)
+       #set($docList = $util.arrayList)
+       #set($discard = $categoriesDocs.put($value, $docList))
+      #end
+      #set($discard = $docList.add($currentdoc.prefixedFullName))
+    #end
+  #end
+  #if($request.debug)
+    /* {{{ $categoriesDocs }}} */
   #end
   #displayCategories($categories $categoriesDocs)
   #end
