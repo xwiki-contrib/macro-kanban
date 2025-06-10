@@ -480,6 +480,7 @@ ul.card-field-list {
 #set ($displayedCategoryColumns = "$!xcontext.macro.params.displayedCategoryColumns")
 #set ($order = "$!xcontext.macro.params.order")
 #set ($limit = "$!xcontext.macro.params.limit")
+#set ($order = "$!xcontext.macro.params.order")
 
 #set($width = "$xcontext.macro.params.width")
 #set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayedCategoryColumns=${escapetool.url($displayedCategoryColumns)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}&amp;order=${escapetool.url($order)}&amp;limit=${escapetool.url($limit)}"))
@@ -1389,6 +1390,72 @@ ul.card-field-list {
     </property>
     <property>
       <type/>
+    </property>
+  </object>
+  <object>
+    <name>Macros.AWMKanbanMacro</name>
+    <number>14</number>
+    <className>XWiki.WikiMacroParameterClass</className>
+    <guid>2408daf8-4ce8-4f29-9a73-67d4120e790a</guid>
+    <class>
+      <name>XWiki.WikiMacroParameterClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <defaultValue>
+        <disabled>0</disabled>
+        <name>defaultValue</name>
+        <number>4</number>
+        <prettyName>Parameter default value</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </defaultValue>
+      <description>
+        <disabled>0</disabled>
+        <name>description</name>
+        <number>2</number>
+        <prettyName>Parameter description</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </description>
+      <mandatory>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>mandatory</name>
+        <number>3</number>
+        <prettyName>Parameter mandatory</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </mandatory>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Parameter name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <property>
+      <defaultValue/>
+    </property>
+    <property>
+      <description>Maximum amount of items to display. If displayedCategoryColumns parameter is used, the limit is per category.</description>
+    </property>
+    <property>
+      <mandatory/>
+    </property>
+    <property>
+      <name>limit</name>
     </property>
   </object>
 </xwikidoc>
