@@ -206,7 +206,13 @@ Additional parameters:
                     gutter: '15px',
                     widthBoard: '250px',
                     responsive: '700',
-                    colors: ["yellow", "green", "blue", "red", "orange"],
+                    colors: {
+                      'green': '#8C4',
+                      'blue':'#0AC',
+                      'orange':'#F91',
+                      'yellow':'#FC3',
+                      'red':'#E43'
+                    },
                     boards: [],
                     dragBoards: true,
                     addItemButton: false,
@@ -446,9 +452,9 @@ Additional parameters:
                         allClasses.map(function (value) {
                             headerBoard.classList.add(value);
                         });
-                        if (board.color !== '' &amp;&amp; board.color !== undefined) {
-                            headerBoard.classList.add("kanban-header-" + board.color);
-                        }
+                        // We want to keep backward compatibility with the old "color" property so we don't break existing boards.
+                        color = defaults.colors[board.color] ? defaults.colors[board.color] : board.color;
+                        headerBoard.style.background = color;
                         titleBoard = document.createElement('div');
                         titleBoard.classList.add('kanban-title-board');
                         titleBoard.innerHTML = board.title;
@@ -1981,26 +1987,6 @@ Additional parameters:
   font-weight: bold;
 }
 
-.kanban-header-yellow {
-    background: #FC3;
-}
-
-.kanban-header-orange {
-    background: #F91;
-}
-
-.kanban-header-blue {
-    background: #0AC;
-}
-
-.kanban-header-red {
-    background: #E43;
-}
-
-.kanban-header-green {
-    background: #8C4;
-}
-
 .kanban-addboard {
     float: left;
     margin: 30px;
@@ -2299,25 +2285,6 @@ require(['jquery','jkanban'], function(jQuery) {
                 });
 
             },
-            colorClick: function (el, boardId) {
-                console.log("in color click");
-                var board = jQuery(el.parentNode).attr("data-id");
-                var boardJSON = kanban.getBoardJSON(board);
-                var currentColor = boardJSON.color;
-                console.log("Current color " + currentColor);
-                var index = kanban.options.colors.findIndex(function (element) {
-                    return (element == currentColor)
-                }) + 1;
-                console.log("Next index " + index);
-                if (index &gt;= kanban.options.colors.length)
-                    index = 0;
-                var nextColor = kanban.options.colors[index];
-                console.log("Next color " + nextColor);
-                boardJSON.color = nextColor;
-                jQuery(el).removeClass("kanban-header-" + currentColor);
-                jQuery(el).addClass("kanban-header-" + nextColor);
-                kanban.onChange();
-            },
             removeClick: function (el, boardId) {
                 if (confirm("Do you want to delete this board?")) {
                     console.log("Delete board");
@@ -2366,8 +2333,33 @@ require(['jquery','jkanban'], function(jQuery) {
                                 new XWiki.widgets.Notification('$success', 'info', '20');
                               },
                               error: function(result) {
-                                #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
-                                new XWiki.widgets.Notification('$error', 'error', '20');
+                                // This is a workaround for XWIKI-20704. Remove this section of code when the parent
+                                // of this project will greater or equal than the fix version of the issue.
+                                // --- START ---
+                                let regex = /\/objects\/([^\/]+)\/0\/properties\/([^\/]+)/;
+                                let match = restURL.match(regex);
+                                let params = {
+                                  outputSyntax: 'plain',
+                                  docRef: currentdoc.documentReference.toString(),
+                                  className: match[1],
+                                  propertyName: match[2]
+                                };
+                                jQuery.ajax({
+                                  url: new XWiki.Document(XWiki.Model.resolve('Macros.KanbanWorkaroundService', XWiki.EntityType.DOCUMENT, XWiki.currentDocument.getDocumentReference())).getURL('get', jQuery.param(params)),
+                                  type: 'GET',
+                                  success: function(result) {
+                                    if (result.status === boardId) {
+                                      new XWiki.widgets.Notification('$success', 'info', '20');
+                                    } else {
+                                      #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
+                                      new XWiki.widgets.Notification('$error', 'error', '20');
+                                    }
+                                  },
+                                  error: function() {
+                                    new XWiki.widgets.Notification('$error', 'error', '20');
+                                  }
+                                });
+                                // --- END ---
                               }
                  });
             },
