@@ -112,9 +112,6 @@
     #set($query = "${query} order by obj.${order}")
    #end
   #end
-  #if($request.debug)
-  /* {{{ $query }}} */
-  #end
   #set ($categoryField = $xwiki.getDocument($className).getxWikiClass().get($category))
   #set ($categories = $categoryField.getListValues())
   #if ($selectedCategories)
@@ -148,33 +145,24 @@
           #set ($discard = $docList.add($currentpage))
         #end
       #end
-      #if ($request.debug)
-        /* {{{$categoryValue: $docList }}} */
-      #end
       #set ($discard = $categoriesDocs.put($categoryValue, $docList))
     #end
   #else
     #set ($results = $services.query.xwql($query).setLimit($limit))
     #set ($results = $results.execute())
-    #if($request.debug)
-    /* {{{ $results }}} */
-    #end
-    #foreach($currentpage in $results)
-      #set($currentdoc = $xwiki.getDocument($currentpage))
-      #set($value = $currentdoc.getValue($category))
-      #if($value &amp;&amp; !$categories.contains($value))
-       #set($discard = $categories.add($value))
+    #foreach ($currentpage in $results)
+      #set ($currentdoc = $xwiki.getDocument($currentpage))
+      #set ($value = $currentdoc.getValue($category))
+      #if ($value &amp;&amp; !$categories.contains($value))
+       #set ($discard = $categories.add($value))
       #end
-      #set($docList = $categoriesDocs.get($value))
-      #if(!$docList)
-       #set($docList = $util.arrayList)
-       #set($discard = $categoriesDocs.put($value, $docList))
+      #set ($docList = $categoriesDocs.get($value))
+      #if (!$docList)
+       #set ($docList = $util.arrayList)
+       #set ($discard = $categoriesDocs.put($value, $docList))
       #end
-      #set($discard = $docList.add($currentdoc.prefixedFullName))
+      #set ($discard = $docList.add($currentdoc.prefixedFullName))
     #end
-  #end
-  #if($request.debug)
-    /* {{{ $categoriesDocs }}} */
   #end
   #displayCategories($categories $categoriesDocs)
   #end
