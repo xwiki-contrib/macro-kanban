@@ -732,7 +732,7 @@ ul.card-field-list {
       <defaultValue/>
     </property>
     <property>
-      <description>Order to sort the data by. Example: 'doc.name desc', 'doc.date', or 'status' if the className object contains such a field. Sort by multiple fields: 'status asc, obj.otherField desc, doc.name desc'</description>
+      <description>Order to sort the data by. Example: 'doc.name desc', 'doc.date desc', or 'customClassField1 asc' if the className object contains such a field. Sort by multiple fields: 'customClassField1 asc, customClassField2 desc, doc.name desc'</description>
     </property>
     <property>
       <mandatory/>
