@@ -51,6 +51,7 @@ Example:
 * ##title## - field to display the title
 * ##columns## - the class fields to display as a description in each card
 * ##order## - order to sort the data by. Example: 'doc.name desc', 'doc.date desc', 'customClassField1 asc, customClassField2 desc, doc.name desc' or 'customClassField1 asc' if the className object contains such custom fields
+* ##limit## - the maximum amount of items to show. If the ##displayedCategoryColumns## parameter is set, the limit is applied for each column.
 
 Examples:
 
