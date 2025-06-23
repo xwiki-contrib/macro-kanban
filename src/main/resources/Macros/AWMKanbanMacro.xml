@@ -483,7 +483,7 @@ ul.card-field-list {
 #set ($limit = "$!xcontext.macro.params.limit")
 
 #set($width = "$xcontext.macro.params.width")
-#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayedCategoryColumns=${escapetool.url($displayedCategoryColumns)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}&amp;limit=${escapetool.url($limit)}"))
+#set($source = $xwiki.getDocument("Macros.KanbanAWMSource").getURL("get", "xpage=plain&amp;outputSyntax=plain&amp;className=${escapetool.url($className)}&amp;category=${escapetool.url($category)}&amp;displayedCategoryColumns=${escapetool.url($displayedCategoryColumns)}&amp;title=${escapetool.url($title)}&amp;columns=${escapetool.url($columns)}&amp;xwql=${escapetool.url($xwql)}&amp;colors=${escapetool.url($colors)}&amp;order=${escapetool.url($order)}&amp;limit=${escapetool.url($limit)}"))
 #set($awmupdatepath = "/objects/${className}/0/properties/${category}/")
 {{kanban source="${source}" updateService="" addBoardButton="false" addItemButton="false" removeBoardButton="false" removeItemButton="false" awmupdatepath="${awmupdatepath}" width="${width}" /}}
 {{/velocity}}

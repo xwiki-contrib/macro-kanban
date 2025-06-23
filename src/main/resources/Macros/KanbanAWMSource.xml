@@ -142,18 +142,13 @@
   #if ($selectedCategories)
     #foreach ($categoryValue in $categories)
       #set ($results = $services.query.xwql($query).bindValue('categoryValue', $categoryValue).setLimit($limit))
+      #set ($results = $results.addFilter('document').addFilter('viewable'))
       #set ($results = $results.execute())
-      #set ($docList = [])
-      ## Filter out pages without view rights.
-      #foreach ($currentpage in $results)
-        #if ($xwiki.getDocument($currentpage))
-          #set ($discard = $docList.add($currentpage))
-        #end
-      #end
-      #set ($discard = $categoriesDocs.put($categoryValue, $docList))
+      #set ($discard = $categoriesDocs.put($categoryValue, $results))
     #end
   #else
     #set ($results = $services.query.xwql($query).setLimit($limit))
+    #set ($results = $results.addFilter('document').addFilter('viewable'))
     #set ($results = $results.execute())
     #foreach ($currentpage in $results)
       #set ($currentdoc = $xwiki.getDocument($currentpage))
@@ -163,7 +158,7 @@
       #end
       #set ($docList = $categoriesDocs.get($value))
       #if (!$docList)
-       #set ($docList = $util.arrayList)
+       #set ($docList = [])
        #set ($discard = $categoriesDocs.put($value, $docList))
       #end
       #set ($discard = $docList.add($currentdoc.prefixedFullName))
