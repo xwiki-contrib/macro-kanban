@@ -98,11 +98,19 @@
   #end
   #set($order = $request.order)
   #if($order &amp;&amp; $order!="")
-   #if($order.startsWith("doc"))
-    #set($query = "${query} order by ${order}")
-   #else
-    #set($query = "${query} order by obj.${order}")
-   #end
+    #set ($orderFragments = '')
+    #foreach ($orderFragment in $order.split(','))
+      #set ($orderFragment = $orderFragment.trim())
+      #if (!$orderFragment.startsWith('doc'))
+        #set ($orderFragment = "obj.$orderFragment")
+      #end
+      #if ($orderFragments != '')
+        #set ($orderFragments = "$orderFragments,$orderFragment")
+      #else
+        #set ($orderFragments = "$orderFragment")
+      #end
+    #end
+    #set ($query = "${query} order by ${orderFragments}")
   #end
   #if ("$!request.displayedCategoryColumns" != '')
     ## Only display a subset of all categories.
