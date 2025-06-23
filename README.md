@@ -10,7 +10,7 @@ It is possible to drag and drop pages from one column to another and will automa
 * Project Lead: [slauriere](http://www.xwiki.org/xwiki/bin/view/XWiki/slauriere)
 * [Documentation & Download](http://extensions.xwiki.org/xwiki/bin/view/Extension/Kanban%20Macro/)
 * Communication: [Mailing List](<http://dev.xwiki.org/xwiki/bin/view/Community/MailingLists>), [IRC](http://dev.xwiki.org/xwiki/bin/view/Community/IRC>)
-* Minimal XWiki version supported: 8.4.6
+* Minimal XWiki version supported: 14.10
 * License: LGPL 2.1
 * Translations: N/A
 * Sonar Dashboard: N/A
