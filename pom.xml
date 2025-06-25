@@ -28,7 +28,7 @@
     <version>14.10-1</version>
   </parent>
   <artifactId>macro-kanban</artifactId>
-  <version>1.4.2-SNAPSHOT</version>
+  <version>1.4.1-SNAPSHOT</version>
   <packaging>xar</packaging>
   <name>Kanban Macro</name>
   <description>Displays a Kanban view of AppWithinMinutes data.</description>
