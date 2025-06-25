@@ -44,8 +44,12 @@
       <organization>XWiki SAS</organization>
     </developer>
     <developer>
-	    <id>slauriere</id>
-	    <name>slauriere</name>
+      <id>slauriere</id>
+      <name>slauriere</name>
+    </developer>
+    <developer>
+      <id>KebabRonin</id>
+      <name>Alexandru Brassat</name>
     </developer>
   </developers>
   <scm>
@@ -58,7 +62,7 @@
     <xwiki.extension.name>Kanban macro</xwiki.extension.name>
     <xwiki.extension.category>macro</xwiki.extension.category>
 
-    <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
+    <xwiki.release.jira.skip>true</xwiki.release.jira.skip>
     <xwiki.issueManagement.jira.id>KANBAN</xwiki.issueManagement.jira.id>
 
     <!-- Components -->
