@@ -1966,6 +1966,8 @@ Additional parameters:
 
 .kanban-item-title {
   margin: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .kanban-item:hover {
