@@ -55,15 +55,15 @@ Example:
 
 Examples:
 
-== Kanban of Movies by genre showing the director field ==
+== Kanban board for each director, showing genre and seen fields as description for each card ==
 
 {{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1"/}}
 
-== Kanban of Movies showing the director field, only showing a subset of directors==
+== Kanban board for a subset of directors ==
 
 {{awmkanban app="Help.Applications.Movies" category="databaseList1" displayedCategoryColumns="Help.Applications.Contributors.Charlie Chaplin" columns="staticList1,boolean1"/}}
 
-== Kanban of Movies by genre showing the director field only comedy movies ==
+== Kanban board for each director, showing only unseen movies ==
 
 {{awmkanban app="Help.Applications.Movies" category="databaseList1" columns="staticList1,boolean1" xwql="obj.boolean1=0"/}}</content>
   <object>
