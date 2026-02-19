@@ -185,7 +185,7 @@ Additional parameters:
          * jKanban
          * Vanilla Javascript plugin for manage kanban boards
          *
-         * @site: http://www.riccardotartaglia.it/jkanban/
+         * @url: http://www.riccardotartaglia.it/jkanban/
          * @author: Riccardo Tartaglia
          */
 
@@ -2299,7 +2299,7 @@ Additional parameters:
 &lt;script type="text/javascript"&gt;
 require.config({
   paths: {
-    jkanban: '$xwiki.getURL("Macros.KanbanMacro", "jsx", "language=${xcontext.language}")'
+    jkanban: '$xwiki.getURL("Macros.KanbanMacro", "jsx", "language=${xcontext.locale}")'
   }
 });
 require(['jquery','jkanban'], function(jQuery) {

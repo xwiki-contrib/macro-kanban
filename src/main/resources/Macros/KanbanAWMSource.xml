@@ -79,7 +79,7 @@ ${escapetool.xml($pname)}&lt;/span&gt;&lt;span class='card-field-value'&gt;$valu
       #set ($itemmap = { "id" : $docid, "title" : $stitle, "url": $surl, "content" : $scontent })
       #set ($ok = $items.add($itemmap))
     #end
-    #set ($color = $listtool.get($colors, $foreach.index).strip())
+    #set ($color = $colors.get($foreach.index).strip())
     #if (!$color)
       #set ($color = "blue")
     #end
@@ -138,7 +138,7 @@ ${escapetool.xml($pname)}&lt;/span&gt;&lt;span class='card-field-value'&gt;$valu
     #end
     #set ($categories = $validatedCategories)
   #end
-  #set ($categoriesDocs = $util.hashMap)
+  #set ($categoriesDocs = {})
   #set ($limit = $request.limit)
   #if ("$!limit" == '')
     #set ($limit = 50)
