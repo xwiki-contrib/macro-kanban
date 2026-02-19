@@ -492,14 +492,12 @@ Additional parameters:
                             nodeItem.dropfn = itemKanban.drop;
                             nodeItem.dataset.eid = itemKanban.id;
 
-                            var nodeItemTitle = document.createElement('div');
+                            var nodeItemTitle = document.createElement(itemKanban.url ? 'a' : 'div');
                             nodeItemTitle.classList.add('kanban-item-title');
                             nodeItemTitle.innerHTML = itemKanban.title;
                             nodeItemTitle.clickfn = itemKanban.click; 
                             if (itemKanban.url) {
-                              nodeItemTitle.addEventListener('click', function (e) {
-                                 location = this.url;
-                              }.bindAsEventListener(itemKanban));
+                              nodeItemTitle.href = itemKanban.url;
                             } else {
                               // add click handler of item
                               __onclickHandler(nodeItemTitle);
