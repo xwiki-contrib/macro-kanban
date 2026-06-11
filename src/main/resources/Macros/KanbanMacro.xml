@@ -2306,7 +2306,7 @@ require(['jquery','jkanban'], function(jQuery) {
         var kanban = window.kanban = new jKanban({
             element: '#cp-app-kanban-content-${kanbanCounter}',
             gutter: '15px',
-            widthBoard: '${xcontext.macro.params.width}',
+            widthBoard: $jsontool.serialize($xcontext.macro.params.width),
             onChange: function () {
               if (updateService &amp;&amp; updateService!="") {
                 var newBoards = JSON.stringify(this.boards);
@@ -2430,7 +2430,7 @@ require(['jquery','jkanban'], function(jQuery) {
 #if($xcontext.macro.params.awmupdatepath)            
             onBoardChange: function(itemId, boardId) {
                 var currentdoc = new XWiki.Document(XWiki.Model.resolve(itemId, XWiki.EntityType.DOCUMENT));
-                var restURL = currentdoc.getRestURL() + "${xcontext.macro.params.awmupdatepath}";
+                var restURL = currentdoc.getRestURL() + $jsontool.serialize(${xcontext.macro.params.awmupdatepath});
         var data = '&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;property xmlns="http://www.xwiki.org" name="defaultEditMode" type="String"&gt;&lt;value&gt;'
               + boardId + '&lt;/value&gt;&lt;/property&gt;'
                 jQuery.ajax({ url: restURL, type: 'PUT', data: data, contentType: "application/xml",
@@ -2471,16 +2471,16 @@ require(['jquery','jkanban'], function(jQuery) {
             },
 #end
 #if($xcontext.macro.params.addItemButton)
-            addItemButton: ${xcontext.macro.params.addItemButton},
+            addItemButton: $jsontool.serialize($xcontext.macro.params.addItemButton),
 #end            
 #if($xcontext.macro.params.addBoardButton)            
-            addBoardButton: ${xcontext.macro.params.addBoardButton},
+            addBoardButton: $jsontool.serialize($xcontext.macro.params.addBoardButton),
 #end
 #if($xcontext.macro.params.removeBoardButton)            
-            removeBoardButton: ${xcontext.macro.params.removeBoardButton},
+            removeBoardButton: $jsontool.serialize($xcontext.macro.params.removeBoardButton),
 #end
 #if($xcontext.macro.params.addRemoveButton)            
-            addRemoveButton: ${xcontext.macro.params.addRemoveButton},
+            addRemoveButton: $jsontool.serialize($xcontext.macro.params.addRemoveButton),
 #end
             boards: boards
         });
@@ -2490,7 +2490,7 @@ require(['jquery','jkanban'], function(jQuery) {
       var counter = ${kanbanCounter};
       var updateService = "${xwiki.getURL("Macros.KanbanService")}?xpage=plain&amp;outputSyntax=plain";
       #if($xcontext.macro.params.updateService)
-       updateService = "${xcontext.macro.params.updateService}";
+       updateService = $jsontool.serialize(${xcontext.macro.params.updateService});
       #end
       #if($xcontext.macro.params.source)
        var getdata = jQuery.getJSON("${xcontext.macro.params.source}", function(data) {
@@ -2501,7 +2501,7 @@ require(['jquery','jkanban'], function(jQuery) {
          new XWiki.widgets.Notification('$error', 'error', '20');
        });
       #elseif($xcontext.macro.content)
-       var boards = ${xcontext.macro.content};
+       var boards = $jsontool.parse($jsontool.serialize("$!xcontext.macro.content"));
        initKanban(boards, updateService);
       #else
        var boards = [];
