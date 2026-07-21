@@ -2471,16 +2471,16 @@ require(['jquery','jkanban'], function(jQuery) {
             },
 #end
 #if($xcontext.macro.params.addItemButton)
-            addItemButton: $jsontool.serialize($xcontext.macro.params.addItemButton),
-#end            
-#if($xcontext.macro.params.addBoardButton)            
-            addBoardButton: $jsontool.serialize($xcontext.macro.params.addBoardButton),
+            addItemButton: ('true' === $jsontool.serialize($xcontext.macro.params.addItemButton)),
 #end
-#if($xcontext.macro.params.removeBoardButton)            
-            removeBoardButton: $jsontool.serialize($xcontext.macro.params.removeBoardButton),
+#if($xcontext.macro.params.addBoardButton)
+            addBoardButton: ('true' === $jsontool.serialize($xcontext.macro.params.addBoardButton)),
 #end
-#if($xcontext.macro.params.addRemoveButton)            
-            addRemoveButton: $jsontool.serialize($xcontext.macro.params.addRemoveButton),
+#if($xcontext.macro.params.removeBoardButton)
+            removeBoardButton: ('true' === $jsontool.serialize($xcontext.macro.params.removeBoardButton)),
+#end
+#if($xcontext.macro.params.addRemoveButton)
+            addRemoveButton: ('true' === $jsontool.serialize($xcontext.macro.params.addRemoveButton)),
 #end
             boards: boards
         });
@@ -2496,7 +2496,7 @@ require(['jquery','jkanban'], function(jQuery) {
        var getdata = jQuery.getJSON("${xcontext.macro.params.source}", function(data) {
          initKanban(data, updateService);
        });
-       getdata.error(function(xhr,status,error) {
+       getdata.fail(function(xhr,status,error) {
          #set($error = $escapetool.javascript($services.localization.render("kanban.load.error")))
          new XWiki.widgets.Notification('$error', 'error', '20');
        });
