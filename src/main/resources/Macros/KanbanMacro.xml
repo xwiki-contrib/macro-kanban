@@ -1779,6 +1779,328 @@ Additional parameters:
   </object>
   <object>
     <name>Macros.KanbanMacro</name>
+    <number>1</number>
+    <className>XWiki.JavaScriptExtension</className>
+    <guid>6db17ccd-e163-4899-b3a1-b6f1689beb86</guid>
+    <class>
+      <name>XWiki.JavaScriptExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <defaultValue>long</defaultValue>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <freeText>forbidden</freeText>
+        <largeStorage>0</largeStorage>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>5</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <contenttype>PureText</contenttype>
+        <disabled>0</disabled>
+        <editor>PureText</editor>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <restricted>0</restricted>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <freeText>forbidden</freeText>
+        <largeStorage>0</largeStorage>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <property>
+      <cache>long</cache>
+    </property>
+    <property>
+      <code>#set ($l10nKeys = ['kanban.update.success', 'kanban.update.error', 'kanban.load.error'])
+#set ($l10n = {})
+#foreach ($key in $l10nKeys)
+  #set ($discard = $l10n.put($key, $services.localization.render($key)))
+#end
+#[[
+// Start JavaScript-only code.
+(function(l10n) {
+  "use strict";
+
+require(['jquery'], function($) {
+  var notify = function(key, type) {
+    new XWiki.widgets.Notification(l10n[key], type, '20');
+  };
+
+  var editItemTitle = function(kanban, el, onEdit) {
+    if (kanban.inEditMode) {
+      console.log("An edit is already active");
+      return;
+    }
+    kanban.inEditMode = true;
+    var name = $(el).text();
+    $(el).html('');
+    $('&lt;input&gt;&lt;/input&gt;')
+      .attr({
+        'type': 'text',
+        'name': 'text',
+        'id': 'kanban_edit',
+        'size': '30',
+        'value': name
+      })
+      .appendTo(el);
+    $('#kanban_edit').focus();
+    $('#kanban_edit').blur(function() {
+      var name = $('#kanban_edit').val();
+      $(el).text(name);
+      onEdit(name);
+      kanban.onChange();
+      kanban.inEditMode = false;
+    });
+  };
+
+  var updateItemStatus = function(itemId, boardId, restPath) {
+    var currentdoc = new XWiki.Document(XWiki.Model.resolve(itemId, XWiki.EntityType.DOCUMENT));
+    var restURL = currentdoc.getRestURL() + restPath;
+    var data = '&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;property xmlns="http://www.xwiki.org" ' +
+      'name="defaultEditMode" type="String"&gt;&lt;value&gt;' + boardId + '&lt;/value&gt;&lt;/property&gt;';
+    $.ajax({url: restURL, type: 'PUT', data: data, contentType: "application/xml"}).done(function() {
+      notify('kanban.update.success', 'info');
+    }).fail(function() {
+      // This is a workaround for XWIKI-20704. Remove this section of code when the parent of this project will be
+      // greater or equal than the fix version of the issue.
+      // --- START ---
+      var match = restURL.match(/\/objects\/([^\/]+)\/0\/properties\/([^\/]+)/);
+      var params = {
+        outputSyntax: 'plain',
+        docRef: currentdoc.documentReference.toString(),
+        className: match[1],
+        propertyName: match[2]
+      };
+      var workaroundService = new XWiki.Document(XWiki.Model.resolve('Macros.KanbanWorkaroundService',
+        XWiki.EntityType.DOCUMENT, XWiki.currentDocument.getDocumentReference()));
+      $.get(workaroundService.getURL('get', $.param(params))).done(function(result) {
+        if (result.status === boardId) {
+          notify('kanban.update.success', 'info');
+        } else {
+          notify('kanban.update.error', 'error');
+        }
+      }).fail(function() {
+        notify('kanban.update.error', 'error');
+      });
+      // --- END ---
+    });
+  };
+
+  var createKanban = function(config, boards, readOnly) {
+    var currentBoards = JSON.stringify(boards);
+    var kanban;
+    var options = {
+      element: '#cp-app-kanban-content-' + config.counter,
+      gutter: '15px',
+      widthBoard: config.width,
+      boards: boards
+    };
+    if (readOnly) {
+      // Display the kanban without allowing to modify it (e.g. in the WYSIWYG editor, where the changes would be saved
+      // right away, even if the edit is canceled afterwards).
+      Object.assign(options, {
+        // Dragging is enabled only when the window is wider than this value.
+        responsive: Number.MAX_VALUE,
+        addItemButton: false,
+        addBoardButton: false,
+        removeBoardButton: false,
+        addRemoveButton: false,
+        click: function() {},
+        boardTitleClick: function() {}
+      });
+      new jKanban(options);
+      return;
+    }
+    Object.assign(options, {
+      onChange: function() {
+        if (config.updateService) {
+          var newBoards = JSON.stringify(this.boards);
+          if (currentBoards != newBoards) {
+            console.log("Board object has changed " + config.counter);
+            $.post(config.updateService, {
+              page: config.page,
+              nb: config.counter,
+              content: newBoards
+            }).done(function(data) {
+              if (data.indexOf("SUCCESS") &gt;= 0 &amp;&amp; data.indexOf("SUCCESS") &lt; 10) {
+                notify('kanban.update.success', 'info');
+                currentBoards = newBoards;
+              } else {
+                notify('kanban.update.error', 'error');
+              }
+            }).fail(function() {
+              notify('kanban.update.error', 'error');
+            });
+          }
+        }
+      },
+      click: function(el) {
+        editItemTitle(kanban, el, function(name) {
+          var board = $(el.parentNode.parentNode.parentNode).attr("data-id");
+          var pos = kanban.findElementPosition(el.parentNode);
+          kanban.getBoardJSON(board).item[pos].title = name;
+        });
+      },
+      boardTitleClick: function(el) {
+        editItemTitle(kanban, el, function(name) {
+          var board = $(el.parentNode.parentNode).attr("data-id");
+          kanban.getBoardJSON(board).title = name;
+        });
+      },
+      removeClick: function(el) {
+        if (confirm("Do you want to delete this board?")) {
+          console.log("Delete board");
+          var boardName = $(el.parentNode.parentNode).attr("data-id");
+          var index = kanban.options.boards.findIndex(function(board) {
+            return board.id == boardName;
+          });
+          kanban.options.boards.splice(index, 1);
+          kanban.removeBoard(boardName);
+          kanban.onChange();
+        }
+      },
+      buttonClick: function(el, boardId) {
+        // Create a form to enter the new item.
+        var formItem = document.createElement('form');
+        formItem.setAttribute("class", "itemform");
+        formItem.innerHTML = '&lt;div class="form-group"&gt;&lt;textarea class="form-control" rows="2" autofocus&gt;&lt;/textarea&gt;' +
+          '&lt;/div&gt;&lt;div class="form-group"&gt;&lt;button type="submit" class="btn btn-primary btn-xs"&gt;Submit&lt;/button&gt;' +
+          '&lt;button type="button" id="CancelBtn" class="btn btn-default btn-xs pull-right"&gt;Cancel&lt;/button&gt;&lt;/div&gt;';
+        kanban.addForm(boardId, formItem);
+        formItem.addEventListener("submit", function(e) {
+          e.preventDefault();
+          kanban.addElement(boardId, {
+            "title": e.target[0].value
+          });
+          formItem.parentNode.removeChild(formItem);
+        });
+        document.getElementById('CancelBtn').onclick = function() {
+          formItem.parentNode.removeChild(formItem);
+        };
+      }
+    });
+    if (config.awmUpdatePath) {
+      options.onBoardChange = function(itemId, boardId) {
+        updateItemStatus(itemId, boardId, config.awmUpdatePath);
+      };
+    }
+    ['addItemButton', 'addBoardButton', 'removeBoardButton', 'addRemoveButton'].forEach(function(option) {
+      if (typeof config[option] === 'string') {
+        options[option] = config[option] === 'true';
+      }
+    });
+    kanban = new jKanban(options);
+  };
+
+  var initKanban = function(container) {
+    container.attr('data-initialized', 'true');
+    container.children('.cp-app-kanban-placeholder').remove();
+    var config = JSON.parse(container.attr('data-config'));
+    // The kanban is displayed inside the edited content when the page is edited with the WYSIWYG editor.
+    var readOnly = container.closest('.cke_editable').length &gt; 0;
+    if (config.source) {
+      $.getJSON(config.source).done(function(boards) {
+        createKanban(config, boards, readOnly);
+      }).fail(function() {
+        notify('kanban.load.error', 'error');
+      });
+    } else {
+      var boards = [];
+      if (config.content) {
+        try {
+          boards = JSON.parse(config.content);
+        } catch (e) {
+          console.error('Failed to parse the kanban data.', e);
+          notify('kanban.load.error', 'error');
+          return;
+        }
+      }
+      createKanban(config, boards, readOnly);
+    }
+  };
+
+  var init = function(event, data) {
+    var elements = $((data &amp;&amp; data.elements) || document);
+    elements.find('.cp-app-kanban').addBack('.cp-app-kanban').not('[data-initialized]').each(function() {
+      initKanban($(this));
+    });
+  };
+
+  // The WYSIWYG editor triggers this event when the macro output is (re)loaded.
+  $(document).on('xwiki:dom:updated', init);
+  $(init);
+});
+
+// End JavaScript-only code.
+}).apply(']]#', $jsontool.serialize([$l10n]));
+</code>
+    </property>
+    <property>
+      <name>kanbanInit</name>
+    </property>
+    <property>
+      <parse>1</parse>
+    </property>
+    <property>
+      <use>onDemand</use>
+    </property>
+  </object>
+  <object>
+    <name>Macros.KanbanMacro</name>
     <number>0</number>
     <className>XWiki.StyleSheetExtension</className>
     <guid>f2a8c2a9-72ce-4a8f-8297-068370bc6036</guid>
@@ -2280,235 +2602,47 @@ Additional parameters:
     </property>
     <property>
       <code>{{velocity}}
-#set($ok = $xwiki.ssx.use("Macros.KanbanMacro"))
-#if(!$kanbanCounter)
- #set($kanbanCounter = 0)
+#set ($discard = $xwiki.ssx.use('Macros.KanbanMacro'))
+#set ($discard = $xwiki.jsx.use('Macros.KanbanMacro'))
+#if (!$kanbanCounter)
+  #set ($kanbanCounter = 0)
 #else
- #set($kanbanCounter = $kanbanCounter + 1)
+  #set ($kanbanCounter = $kanbanCounter + 1)
+#end
+## The kanban is initialized by the JavaScript skin extension, using this configuration. We don't use an in-line script
+## because the WYSIWYG editor doesn't execute it.
+#set ($kanbanConfig = {
+  'counter': $kanbanCounter,
+  'page': $doc.fullName,
+  'updateService': "$xwiki.getURL('Macros.KanbanService')?xpage=plain&amp;outputSyntax=plain"
+})
+#if ($xcontext.macro.params.updateService)
+  #set ($kanbanConfig.updateService = $xcontext.macro.params.updateService)
+#end
+#if ($xcontext.macro.params.source)
+  #set ($kanbanConfig.source = $xcontext.macro.params.source)
+#elseif ($xcontext.macro.content)
+  #set ($kanbanConfig.content = $xcontext.macro.content)
+#end
+#foreach ($parameter in ['width', 'awmupdatepath', 'addItemButton', 'addBoardButton', 'removeBoardButton', 'addRemoveButton'])
+  #set ($value = $xcontext.macro.params.get($parameter))
+  #if ("$!value" != '')
+    #set ($discard = $kanbanConfig.put($parameter.replace('awmupdatepath', 'awmUpdatePath'), "$value"))
+  #end
 #end
 {{html clean="false"}}
-&lt;div id="cp-app-kanban-${kanbanCounter}" class="cp-app-kanban"&gt;
+## Escape { to make sure the configuration doesn't close the HTML macro.
+&lt;div id="cp-app-kanban-${kanbanCounter}" class="cp-app-kanban"
+    data-config="$escapetool.xml($jsontool.serialize($kanbanConfig)).replace('{', '&amp;#123;')"&gt;
+    ## Displayed when the JavaScript code is not executed, e.g. in the WYSIWYG editor when the JavaScript skin
+    ## extensions are not loaded.
+    &lt;div class="cp-app-kanban-placeholder box infomessage"&gt;$escapetool.xml($services.localization.render('kanban.editor.placeholder'))&lt;/div&gt;
     &lt;div id="cp-app-kanban-editor-${kanbanCounter}" class="cp-app-kanban-editor"&gt;
         &lt;div id="cp-app-kanban-container-${kanbanCounter}" class="cp-app-kanban-container"&gt;
             &lt;div id="cp-app-kanban-content-${kanbanCounter}"&gt;&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
 &lt;/div&gt;
-&lt;script type="text/javascript"&gt;
-require.config({
-  paths: {
-    jkanban: '$xwiki.getURL("Macros.KanbanMacro", "jsx", "language=${xcontext.locale}")'
-  }
-});
-require(['jquery','jkanban'], function(jQuery) {
-       function initKanban(boards, updateService) {
-        var currentBoards = JSON.stringify(boards);
-        var kanban = window.kanban = new jKanban({
-            element: '#cp-app-kanban-content-${kanbanCounter}',
-            gutter: '15px',
-            widthBoard: $jsontool.serialize($xcontext.macro.params.width),
-            onChange: function () {
-              if (updateService &amp;&amp; updateService!="") {
-                var newBoards = JSON.stringify(this.boards);
-                if (currentBoards!=newBoards) {
-                 console.log("Board object has changed " + counter);
-                 var posting = jQuery.post( updateService, { page : page, nb : counter, content : newBoards } );
-                 posting.success(function(data) {
-                    if (data.indexOf("SUCCESS")&gt;=0 &amp;&amp; data.indexOf("SUCCESS")&lt;10) {
-                     #set($success = $escapetool.javascript($services.localization.render("kanban.update.success")))
-                     new XWiki.widgets.Notification('$success', 'info', '20');
-                     currentBoards = newBoards;
-                    } else {
-                     #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
-                     new XWiki.widgets.Notification('$error', 'error', '20');
-                    }
-                 });
-                 posting.error(function(xhr,status,error) {
-                    #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
-                    new XWiki.widgets.Notification('$error', 'error', '20');
-                 });
-
-                 // TODO: need to save board back to XWiki
-                }
-              }
-            },
-            click: function (el) {
-                if (kanban.inEditMode) {
-                    console.log("An edit is already active");
-                    return;
-                }
-                kanban.inEditMode = true;
-                var name = jQuery(el).text();
-                jQuery(el).html('');
-                jQuery('&lt;input&gt;&lt;/input&gt;')
-                    .attr({
-                        'type': 'text',
-                        'name': 'text',
-                        'id': 'kanban_edit',
-                        'size': '30',
-                        'value': name
-                    })
-                    .appendTo(el);
-                jQuery('#kanban_edit').focus();
-                jQuery('#kanban_edit').blur(function () {
-                    var name = jQuery('#kanban_edit').val();
-                    jQuery(el).text(name);
-                    var board = jQuery(el.parentNode.parentNode.parentNode).attr("data-id");
-                    var pos = kanban.findElementPosition(el.parentNode);
-                    console.log(pos);
-                    console.log(board);
-                    kanban.getBoardJSON(board).item[pos].title = name;
-                    kanban.onChange();
-                    kanban.inEditMode = false;
-                });
-
-            },
-            boardTitleClick: function (el) {
-                if (kanban.inEditMode) {
-                    console.log("An edit is already active");
-                    return;
-                }
-                kanban.inEditMode = true;
-                var name = jQuery(el).text();
-                jQuery(el).html('');
-                jQuery('&lt;input&gt;&lt;/input&gt;')
-                    .attr({
-                        'type': 'text',
-                        'name': 'text',
-                        'id': 'kanban_edit',
-                        'size': '30',
-                        'value': name
-                    })
-                    .appendTo(el);
-                jQuery('#kanban_edit').focus();
-                jQuery('#kanban_edit').blur(function () {
-                    var name = jQuery('#kanban_edit').val();
-                    jQuery(el).text(name);
-                    var board = jQuery(el.parentNode.parentNode).attr("data-id");
-                    kanban.getBoardJSON(board).title = name;
-                    kanban.onChange();
-                    kanban.inEditMode = false;
-                });
-
-            },
-            removeClick: function (el, boardId) {
-                if (confirm("Do you want to delete this board?")) {
-                    console.log("Delete board");
-                    var boardName = jQuery(el.parentNode.parentNode).attr("data-id");
-                    for (index in kanban.options.boards) {
-                        if (kanban.options.boards[index].id == boardName) {
-                            break;
-                        }
-                        index++;
-                    }
-                    kanban.options.boards.splice(index, 1);
-                    kanban.removeBoard(boardName);
-                    kanban.onChange();
-                }
-            },
-            buttonClick: function (el, boardId) {
-                console.log(el);
-                console.log(boardId);
-                // create a form to enter element 
-                var formItem = document.createElement('form');
-                formItem.setAttribute("class", "itemform");
-                formItem.innerHTML = '&lt;div class="form-group"&gt;&lt;textarea class="form-control" rows="2" autofocus&gt;&lt;/textarea&gt;&lt;/div&gt;&lt;div class="form-group"&gt;&lt;button type="submit" class="btn btn-primary btn-xs"&gt;Submit&lt;/button&gt;&lt;button type="button" id="CancelBtn" class="btn btn-default btn-xs pull-right"&gt;Cancel&lt;/button&gt;&lt;/div&gt;'
-
-                kanban.addForm(boardId, formItem);
-                formItem.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    var text = e.target[0].value
-                    kanban.addElement(boardId, {
-                        "title": text,
-                    })
-                    formItem.parentNode.removeChild(formItem);
-                });
-                document.getElementById('CancelBtn').onclick = function () {
-                    formItem.parentNode.removeChild(formItem)
-                }
-            },
-#if($xcontext.macro.params.awmupdatepath)            
-            onBoardChange: function(itemId, boardId) {
-                var currentdoc = new XWiki.Document(XWiki.Model.resolve(itemId, XWiki.EntityType.DOCUMENT));
-                var restURL = currentdoc.getRestURL() + $jsontool.serialize(${xcontext.macro.params.awmupdatepath});
-        var data = '&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;property xmlns="http://www.xwiki.org" name="defaultEditMode" type="String"&gt;&lt;value&gt;'
-              + boardId + '&lt;/value&gt;&lt;/property&gt;'
-                jQuery.ajax({ url: restURL, type: 'PUT', data: data, contentType: "application/xml",
-                              success: function(result) {
-                                #set($success = $escapetool.javascript($services.localization.render("kanban.update.success")))
-                                new XWiki.widgets.Notification('$success', 'info', '20');
-                              },
-                              error: function(result) {
-                                // This is a workaround for XWIKI-20704. Remove this section of code when the parent
-                                // of this project will greater or equal than the fix version of the issue.
-                                // --- START ---
-                                let regex = /\/objects\/([^\/]+)\/0\/properties\/([^\/]+)/;
-                                let match = restURL.match(regex);
-                                let params = {
-                                  outputSyntax: 'plain',
-                                  docRef: currentdoc.documentReference.toString(),
-                                  className: match[1],
-                                  propertyName: match[2]
-                                };
-                                jQuery.ajax({
-                                  url: new XWiki.Document(XWiki.Model.resolve('Macros.KanbanWorkaroundService', XWiki.EntityType.DOCUMENT, XWiki.currentDocument.getDocumentReference())).getURL('get', jQuery.param(params)),
-                                  type: 'GET',
-                                  success: function(result) {
-                                    if (result.status === boardId) {
-                                      new XWiki.widgets.Notification('$success', 'info', '20');
-                                    } else {
-                                      #set($error = $escapetool.javascript($services.localization.render("kanban.update.error")))
-                                      new XWiki.widgets.Notification('$error', 'error', '20');
-                                    }
-                                  },
-                                  error: function() {
-                                    new XWiki.widgets.Notification('$error', 'error', '20');
-                                  }
-                                });
-                                // --- END ---
-                              }
-                 });
-            },
-#end
-#if($xcontext.macro.params.addItemButton)
-            addItemButton: ('true' === $jsontool.serialize($xcontext.macro.params.addItemButton)),
-#end
-#if($xcontext.macro.params.addBoardButton)
-            addBoardButton: ('true' === $jsontool.serialize($xcontext.macro.params.addBoardButton)),
-#end
-#if($xcontext.macro.params.removeBoardButton)
-            removeBoardButton: ('true' === $jsontool.serialize($xcontext.macro.params.removeBoardButton)),
-#end
-#if($xcontext.macro.params.addRemoveButton)
-            addRemoveButton: ('true' === $jsontool.serialize($xcontext.macro.params.addRemoveButton)),
-#end
-            boards: boards
-        });
-      };
-
-      var page = "${doc.fullName}";
-      var counter = ${kanbanCounter};
-      var updateService = "${xwiki.getURL("Macros.KanbanService")}?xpage=plain&amp;outputSyntax=plain";
-      #if($xcontext.macro.params.updateService)
-       updateService = $jsontool.serialize(${xcontext.macro.params.updateService});
-      #end
-      #if($xcontext.macro.params.source)
-       var getdata = jQuery.getJSON("${xcontext.macro.params.source}", function(data) {
-         initKanban(data, updateService);
-       });
-       getdata.fail(function(xhr,status,error) {
-         #set($error = $escapetool.javascript($services.localization.render("kanban.load.error")))
-         new XWiki.widgets.Notification('$error', 'error', '20');
-       });
-      #elseif($xcontext.macro.content)
-       var boards = $jsontool.parse($jsontool.serialize("$!xcontext.macro.content"));
-       initKanban(boards, updateService);
-      #else
-       var boards = [];
-       initKanban(boards, updateService);
-      #end
- });
-&lt;/script&gt;
 {{/html}}
 {{/velocity}}</code>
     </property>

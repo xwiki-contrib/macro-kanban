@@ -39,6 +39,7 @@
   <content>kanban.update.success=The XWiki data has been updated.
 kanban.update.error=An error occured while trying to update the Kanban data.
 kanban.load.error=An error occured while trying to load the Kanban data.
+kanban.editor.placeholder=The Kanban board is displayed when viewing the page.
 </content>
   <object>
     <name>Macros.KanbanMacroTranslations</name>

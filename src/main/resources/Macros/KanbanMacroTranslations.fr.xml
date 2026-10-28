@@ -39,5 +39,6 @@
   <content>kanban.update.success=Les données ont été mises à jour.
 kanban.update.error=Une erreur s'est produite lors de la mise à jour des données.
 kanban.load.error=Une erreur s'est produite lors du chargement des données.
+kanban.editor.placeholder=Le tableau Kanban est affiché lors de la visualisation de la page.
 </content>
 </xwikidoc>
